@@ -3,11 +3,11 @@ package com.kuifir.context;
 import com.kuifir.beans.*;
 import com.kuifir.core.ClassPathXmlResource;
 
-public class ClassPathXmlApplicationContext implements BeanFactory {
-   private BeanFactory beanFactory;
+public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
+    private SimpleBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
-        BeanFactory beanFactory = new SimpleBeanFactory();
+        SimpleBeanFactory beanFactory = new SimpleBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
         reader.LoadBeanDefinition(new ClassPathXmlResource(fileName));
         this.beanFactory = beanFactory;
@@ -17,9 +17,33 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
     public Object getBean(String beanName) throws BeansException {
         return this.beanFactory.getBean(beanName);
     }
+
     @Override
-    public void registerBeanDefinition(BeanDefinition beanDefinition) {
-        this.beanFactory.registerBeanDefinition(beanDefinition);
+    public Boolean containsBean(String name) {
+        return this.beanFactory.containsBean(name);
     }
 
+    @Override
+    public boolean isSingleton(String name) {
+        return false;
+    }
+
+    @Override
+    public boolean isPrototype(String name) {
+        return false;
+    }
+
+    @Override
+    public Class getType(String name) {
+        return null;
+    }
+
+    public void registerBean(String beanName, Object obj) {
+        this.beanFactory.registerSingleton(beanName, obj);
+    }
+
+    @Override
+    public void publishEvent() {
+
+    }
 }
