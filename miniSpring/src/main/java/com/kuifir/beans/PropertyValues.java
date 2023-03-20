@@ -23,7 +23,7 @@ public class PropertyValues {
     }
 
     public void addPropertyValue(String propertyName, Object propertyValue) {
-        addPropertyValue(new PropertyValue(propertyName, propertyValue));
+//        addPropertyValue(new PropertyValue(propertyName, propertyValue));
     }
 
     public void removePropertyValue(PropertyValue pv) {

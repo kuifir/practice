@@ -1,12 +1,14 @@
 package com.kuifir.test.impl;
 
 import com.kuifir.test.AService;
+import com.kuifir.test.BaseService;
 
 public class AServiceImpl implements AService {
     private String name;
     private int level;
     private String property1;
     private String property2;
+    private BaseService baseService;
 
     public String getProperty1() {
         return property1;
@@ -24,6 +26,14 @@ public class AServiceImpl implements AService {
         this.property2 = property2;
     }
 
+    public BaseService getBaseService() {
+        return baseService;
+    }
+
+    public void setBaseService(BaseService baseService) {
+        this.baseService = baseService;
+    }
+
     public AServiceImpl(String name, int level) {
         this.name = name;
         this.level = level;
@@ -34,6 +44,10 @@ public class AServiceImpl implements AService {
         System.out.println("a service say hello");
     }
 
+    public AServiceImpl(BaseService baseService) {
+        this.baseService = baseService;
+    }
+
     @Override
     public String toString() {
         return "AServiceImpl{" +
@@ -41,6 +55,7 @@ public class AServiceImpl implements AService {
                 ", level=" + level +
                 ", property1='" + property1 + '\'' +
                 ", property2='" + property2 + '\'' +
+                ", baseService=" + baseService +
                 '}';
     }
 }
