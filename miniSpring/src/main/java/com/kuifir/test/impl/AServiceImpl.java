@@ -9,6 +9,7 @@ public class AServiceImpl implements AService {
     private String property1;
     private String property2;
     private BaseService baseService;
+    private BaseService bbs;
 
     public String getProperty1() {
         return property1;
@@ -39,13 +40,10 @@ public class AServiceImpl implements AService {
         this.level = level;
     }
 
+
     @Override
     public void sayHello() {
         System.out.println("a service say hello");
-    }
-
-    public AServiceImpl(BaseService baseService) {
-        this.baseService = baseService;
     }
 
     @Override
@@ -56,6 +54,13 @@ public class AServiceImpl implements AService {
                 ", property1='" + property1 + '\'' +
                 ", property2='" + property2 + '\'' +
                 ", baseService=" + baseService +
+                ", bbs=" + bbs +
                 '}';
     }
+
+    public AServiceImpl(String name, int level, BaseService bbs) {
+        this(name,level);
+        this.bbs = bbs;
+    }
+
 }

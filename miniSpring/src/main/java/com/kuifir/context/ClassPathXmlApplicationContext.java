@@ -7,10 +7,17 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
     private SimpleBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
+        this(fileName, true);
+    }
+
+    public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         SimpleBeanFactory beanFactory = new SimpleBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
-        reader.LoadBeanDefinition(new ClassPathXmlResource(fileName));
+        reader.LoadBeanDefinitions(new ClassPathXmlResource(fileName));
         this.beanFactory = beanFactory;
+        if (!isRefresh) {
+            this.beanFactory.refresh();
+        }
     }
 
     //context再对外提供一个getBean，底下就是调用的BeanFactory对应的方法

@@ -13,7 +13,7 @@ public class XmlBeanDefinitionReader {
         this.simpleBeanFactory = simpleBeanFactory;
     }
 
-    public void LoadBeanDefinition(Resource resource) {
+    public void LoadBeanDefinitions(Resource resource) {
         while (resource.hasNext()) {
             Element element = (Element) resource.next();
             String beanID = element.attributeValue("id");
@@ -50,7 +50,18 @@ public class XmlBeanDefinitionReader {
                 String pValue = e.attributeValue("value");
                 String pType = e.attributeValue("type");
                 String pName = e.attributeValue("name");
-                ArgumentValue value = new ArgumentValue(pValue, pType, pName);
+                String pRef = e.attributeValue("ref");
+                boolean isRef = false;
+                String pV = "";
+                if (pValue != null && !pValue.equals("")) {
+                    isRef = false;
+                    pV = pValue;
+                } else if (pRef != null && !pRef.equals("")) {
+                    isRef = true;
+                    pV = pRef;
+                    refs.add(pRef);
+                }
+                ArgumentValue value = new ArgumentValue(pV, pType, pName,isRef);
                 AVS.addArgumentValue(constructorElements.indexOf(e), value);
                 AVS.addGenericArgumentValue(value);
             }

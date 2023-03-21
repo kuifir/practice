@@ -22,7 +22,7 @@ public class ArgumentValues {
     }
 
     public void addGenericArgumentValue(Object value, String type) {
-        this.genericArgumentValues.add(new ArgumentValue(value, type));
+//        this.genericArgumentValues.add(new ArgumentValue(value, type));
     }
 
     public void addGenericArgumentValue(ArgumentValue newValue) {
