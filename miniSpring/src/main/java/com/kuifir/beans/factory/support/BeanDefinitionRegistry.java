@@ -1,4 +1,6 @@
-package com.kuifir.beans;
+package com.kuifir.beans.factory.support;
+
+import com.kuifir.beans.factory.config.BeanDefinition;
 
 public interface BeanDefinitionRegistry {
     void registerBeanDefinition(String name, BeanDefinition bd);

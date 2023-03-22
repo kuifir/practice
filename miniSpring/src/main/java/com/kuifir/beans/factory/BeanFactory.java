@@ -1,5 +1,6 @@
-package com.kuifir.beans;
+package com.kuifir.beans.factory;
 
+import com.kuifir.beans.BeansException;
 import com.kuifir.test.AService;
 
 public interface BeanFactory {

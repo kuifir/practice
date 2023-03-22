@@ -3,7 +3,7 @@
     <bean id="aservice" class="com.kuifir.test.impl.AServiceImpl">
         <constructor-arg type="String" name="name" value="abc"/>
         <constructor-arg type="int" name="level" value="3"/>
-        <constructor-arg type="com.kuifir.test.BaseService" name="bbs" ref="baseservice"/>
+        <constructor-arg type="com.kuifir.test.BaseService" name="bbs" ref="baseservice_ctr"/>
         <property type="String" name="property1" value="Someone says"/>
         <property type="String" name="property2" value="Hello World!"/>
         <property type="com.kuifir.test.BaseService" name="baseService" ref="baseservice"/>
@@ -15,6 +15,8 @@
         <property type="com.kuifir.test.BaseService" name="bbs" ref="basebaseservice"/>
     </bean>
     <bean id="baseservice_ctr" class="com.kuifir.test.BaseService">
+    </bean>
+    <bean id="baseserviceAnnotation" class="com.kuifir.test.BaseService">
     </bean>
 
 </beans>

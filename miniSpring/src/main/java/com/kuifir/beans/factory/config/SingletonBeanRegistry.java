@@ -1,4 +1,4 @@
-package com.kuifir.beans;
+package com.kuifir.beans.factory.config;
 
 public interface SingletonBeanRegistry {
     void registerSingleton(String beanName, Object singletonObject);

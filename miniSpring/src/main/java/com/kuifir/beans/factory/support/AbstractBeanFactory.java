@@ -1,4 +1,12 @@
-package com.kuifir.beans;
+package com.kuifir.beans.factory.support;
+
+import com.kuifir.beans.BeansException;
+import com.kuifir.beans.PropertyValue;
+import com.kuifir.beans.PropertyValues;
+import com.kuifir.beans.factory.BeanFactory;
+import com.kuifir.beans.factory.config.BeanDefinition;
+import com.kuifir.beans.factory.config.ConstructorArgumentValue;
+import com.kuifir.beans.factory.config.ConstructorArgumentValues;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -8,15 +16,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
-    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
-    private Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(256);
-    private List<String> beanDefinitionNames = new ArrayList<>();
+public abstract class AbstractBeanFactory
+        extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
 
-    public SimpleBeanFactory() {
+    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
+    private List<String> beanDefinitionNames = new ArrayList<>();
+    private Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
+
+    public AbstractBeanFactory() {
     }
 
-    //getBean，容器的核心方法
+    public void refresh() {
+        for (String beanName : beanDefinitionNames) {
+            try {
+                getBean(beanName);
+            } catch (BeansException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     @Override
     public Object getBean(String beanName) throws BeansException {
         // 先尝试直接拿Bean实例
@@ -33,18 +52,43 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 }
                 singleton = createBean(beanDefinition);
                 this.registerSingleton(beanDefinition.getId(), singleton);
-                // 预留beanpostprocessor位置
+                // 进行beanpostprocessor处理
                 // step 1: postProcessBeforeInitialization
+                applyBeanPostProcessorBeforeInitialization(singleton, beanName);
                 // step 2: afterPropertiesSet
                 // step 3: init-method
+                if (beanDefinition.getInitMethodName() != null && !beanDefinition.equals("")) {
+                    invokeInitMethod(beanDefinition, singleton);
+                }
                 // step 4: postProcessAfterInitialization
+                applyBeanPostProcessorAfterInitialization(singleton, beanName);
             }
         }
         return singleton;
     }
 
+    private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {
+        Class clz = null;
+        try {
+            clz = Class.forName(beanDefinition.getClassName());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Method method = null;
+        try {
+            method = clz.getMethod(beanDefinition.getInitMethodName());
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            method.invoke(obj);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Object createBean(BeanDefinition beanDefinition) {
-        Class<?> clz = null;
+        Class<?> clz;
         try {
             clz = Class.forName(beanDefinition.getClassName());
         } catch (ClassNotFoundException e) {
@@ -54,59 +98,9 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         //存放到毛胚实例缓存中
         this.earlySingletonObjects.put(beanDefinition.getId(), obj);
         //handle properties
-        this.handleProperties(beanDefinition, clz, obj);
+        populateBean(beanDefinition, clz, obj);
 
         return obj;
-    }
-
-    @Override
-    public Boolean containsBean(String name) {
-        return containsSingleton(name);
-    }
-
-    @Override
-    public boolean isSingleton(String name) {
-        return this.beanDefinitionMap.get(name).isSingleton();
-    }
-
-    @Override
-    public boolean isPrototype(String name) {
-        return this.beanDefinitionMap.get(name).isPrototype();
-    }
-
-    @Override
-    public Class getType(String name) {
-        return this.beanDefinitionMap.get(name).getClass();
-    }
-
-    @Override
-    public void registerBeanDefinition(String name, BeanDefinition beanDefinition) {
-        this.beanDefinitionMap.put(name, beanDefinition);
-        this.beanDefinitionNames.add(name);
-//        if (!beanDefinition.isLazyInit()) {
-//            try {
-//                getBean(name);
-//            } catch (BeansException e) {
-//            }
-//        }
-    }
-
-
-    @Override
-    public void removeBeanDefinition(String name) {
-        this.beanDefinitionMap.remove(name);
-        this.beanDefinitionNames.remove(name);
-        this.removeSingleton(name);
-    }
-
-    @Override
-    public BeanDefinition getBeanDefinition(String name) {
-        return this.beanDefinitionMap.get(name);
-    }
-
-    @Override
-    public boolean containsBeanDefinition(String name) {
-        return this.beanDefinitionMap.containsKey(name);
     }
 
     private Object doCreateBean(BeanDefinition bd, Class<?> clz) {
@@ -114,12 +108,12 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         Object obj = null;
         try {
             // handle constructor
-            ArgumentValues argumentValues = bd.getConstructorArgumentValues();
+            ConstructorArgumentValues argumentValues = bd.getConstructorArgumentValues();
             if (!argumentValues.isEmpty()) {
                 Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
                 Object[] paramValues = new Object[argumentValues.getArgumentCount()];
                 for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
-                    ArgumentValue argumentValue = argumentValues.getIndexedArgumentValue(i);
+                    ConstructorArgumentValue argumentValue = argumentValues.getIndexedArgumentValue(i);
                     boolean isRef = argumentValue.getIsRef();
                     String pType = argumentValue.getType();
                     Object pValue = argumentValue.getValue();
@@ -169,6 +163,9 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         return obj;
     }
 
+    private void populateBean(BeanDefinition bd, Class<?> clz, Object obj) {
+        handleProperties(bd, clz, obj);
+    }
     private void handleProperties(BeanDefinition bd, Class<?> clz, Object obj) {
         PropertyValues propertyValues = bd.getPropertyValues();
         if (!propertyValues.isEmpty()) {
@@ -225,14 +222,63 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         }
     }
 
-
-    public void refresh() {
-        for (String beanName : beanDefinitionNames) {
-            try {
-                getBean(beanName);
-            } catch (BeansException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    @Override
+    public Boolean containsBean(String name) {
+        return containsSingleton(name);
     }
+    public void registerBean(String beanName, Object obj) {
+        this.registerSingleton(beanName, obj);
+    }
+
+    @Override
+    public void registerBeanDefinition(String name, BeanDefinition bd) {
+        this.beanDefinitionMap.put(name,bd);
+        this.beanDefinitionNames.add(name);
+//        if (!bd.isLazyInit()) {
+//            try {
+//                getBean(name);
+//            } catch (BeansException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+    }
+    @Override
+    public void removeBeanDefinition(String name) {
+        this.beanDefinitionMap.remove(name);
+        this.beanDefinitionNames.remove(name);
+        this.removeSingleton(name);
+
+    }
+
+    @Override
+    public BeanDefinition getBeanDefinition(String name) {
+        return this.beanDefinitionMap.get(name);
+    }
+
+    @Override
+    public boolean containsBeanDefinition(String name) {
+        return this.beanDefinitionMap.containsKey(name);
+    }
+
+    @Override
+    public boolean isSingleton(String name) {
+        return this.beanDefinitionMap.get(name).isSingleton();
+    }
+
+    @Override
+    public boolean isPrototype(String name) {
+        return this.beanDefinitionMap.get(name).isPrototype();
+    }
+
+    @Override
+    public Class getType(String name) {
+        return this.beanDefinitionMap.get(name).getClass();
+    }
+
+
+    abstract public Object applyBeanPostProcessorBeforeInitialization(Object existingBean, String beanName) throws BeansException;
+
+    abstract public Object applyBeanPostProcessorAfterInitialization(Object existingBean, String beanName) throws BeansException;
+
 }

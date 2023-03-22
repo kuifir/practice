@@ -1,4 +1,6 @@
-package com.kuifir.beans;
+package com.kuifir.beans.factory.support;
+
+import com.kuifir.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.ArrayList;
 import java.util.List;

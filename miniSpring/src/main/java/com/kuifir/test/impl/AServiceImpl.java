@@ -1,5 +1,6 @@
 package com.kuifir.test.impl;
 
+import com.kuifir.beans.factory.annotation.Autowired;
 import com.kuifir.test.AService;
 import com.kuifir.test.BaseService;
 
@@ -10,6 +11,9 @@ public class AServiceImpl implements AService {
     private String property2;
     private BaseService baseService;
     private BaseService bbs;
+
+    @Autowired
+    private BaseService baseserviceAnnotation;
 
     public String getProperty1() {
         return property1;
@@ -55,6 +59,7 @@ public class AServiceImpl implements AService {
                 ", property2='" + property2 + '\'' +
                 ", baseService=" + baseService +
                 ", bbs=" + bbs +
+                ", baseserviceAnnotation=" + baseserviceAnnotation +
                 '}';
     }
 
