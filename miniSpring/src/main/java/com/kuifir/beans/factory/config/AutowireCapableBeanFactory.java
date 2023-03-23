@@ -31,7 +31,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
             beanProcessor.setBeanFactory(this);
             result = beanProcessor.postProcessBeforeInitialization(result, beanName);
             if (result == null) {
-                result = result2;
+                return result2;
             }
         }
         return result;
