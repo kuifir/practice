@@ -18,5 +18,6 @@
     </bean>
     <bean id="baseserviceAnnotation" class="com.kuifir.test.BaseService">
     </bean>
-
+    <!--打开注解方式-->
+    <bean id="autowiredAnnotationBeanPostProcessor" class="com.kuifir.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 </beans>

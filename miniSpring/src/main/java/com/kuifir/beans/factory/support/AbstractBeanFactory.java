@@ -5,6 +5,7 @@ import com.kuifir.beans.PropertyValue;
 import com.kuifir.beans.PropertyValues;
 import com.kuifir.beans.factory.BeanFactory;
 import com.kuifir.beans.factory.config.BeanDefinition;
+import com.kuifir.beans.factory.config.ConfigurableBeanFactory;
 import com.kuifir.beans.factory.config.ConstructorArgumentValue;
 import com.kuifir.beans.factory.config.ConstructorArgumentValues;
 
@@ -17,11 +18,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractBeanFactory
-        extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
+        extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegistry {
 
-    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
-    private List<String> beanDefinitionNames = new ArrayList<>();
-    private Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
+    protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
+    protected List<String> beanDefinitionNames = new ArrayList<>();
+    private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
 
     public AbstractBeanFactory() {
     }
@@ -54,14 +55,14 @@ public abstract class AbstractBeanFactory
                 this.registerSingleton(beanDefinition.getId(), singleton);
                 // 进行beanpostprocessor处理
                 // step 1: postProcessBeforeInitialization
-                applyBeanPostProcessorBeforeInitialization(singleton, beanName);
+                applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
                 // step 2: afterPropertiesSet
                 // step 3: init-method
                 if (beanDefinition.getInitMethodName() != null && !beanDefinition.equals("")) {
                     invokeInitMethod(beanDefinition, singleton);
                 }
                 // step 4: postProcessAfterInitialization
-                applyBeanPostProcessorAfterInitialization(singleton, beanName);
+                applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
         }
         return singleton;
@@ -277,8 +278,8 @@ public abstract class AbstractBeanFactory
     }
 
 
-    abstract public Object applyBeanPostProcessorBeforeInitialization(Object existingBean, String beanName) throws BeansException;
+    abstract public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException;
 
-    abstract public Object applyBeanPostProcessorAfterInitialization(Object existingBean, String beanName) throws BeansException;
+    abstract public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException;
 
 }

@@ -1,13 +1,13 @@
 package com.kuifir.beans.factory.annotation;
 
 import com.kuifir.beans.BeansException;
-import com.kuifir.beans.factory.config.AutowireCapableBeanFactory;
+import com.kuifir.beans.factory.BeanFactory;
 import com.kuifir.beans.factory.config.BeanPostProcessor;
 
 import java.lang.reflect.Field;
 
 public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
-    private AutowireCapableBeanFactory beanFactory;
+    private BeanFactory beanFactory;
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         Class<?> clazz = bean.getClass();
@@ -35,11 +35,11 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
         return null;
     }
 
-    public AutowireCapableBeanFactory getBeanFactory() {
+    public BeanFactory getBeanFactory() {
         return beanFactory;
     }
 
-    public void setBeanFactory(AutowireCapableBeanFactory beanFactory) {
+    public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 }

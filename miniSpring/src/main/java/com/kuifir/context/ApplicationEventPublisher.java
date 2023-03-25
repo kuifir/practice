@@ -1,5 +1,8 @@
 package com.kuifir.context;
 
+
 public interface ApplicationEventPublisher {
-    void publishEvent();
+    void publishEvent(ApplicationEvent event);
+
+    void addApplicationListener(ApplicationListener listener);
 }

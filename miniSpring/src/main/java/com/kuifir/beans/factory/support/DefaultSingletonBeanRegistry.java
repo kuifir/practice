@@ -31,7 +31,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     }
 
     @Override
-    public String[] getSingletonsNames() {
+    public String[] getSingletonNames() {
         return (String[]) this.beanNames.toArray();
     }
 

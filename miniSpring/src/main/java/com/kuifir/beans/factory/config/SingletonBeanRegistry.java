@@ -7,7 +7,7 @@ public interface SingletonBeanRegistry {
 
     boolean containsSingleton(String BeanName);
 
-    String[] getSingletonsNames();
+    String[] getSingletonNames();
 
     void removeSingleton(String name);
 }
