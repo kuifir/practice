@@ -165,11 +165,13 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                     e.printStackTrace();
                 }
             } else {
-                obj = clz.newInstance();
+                obj = clz.getDeclaredConstructor().newInstance();
             }
 
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
+        } catch (InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
         System.out.println(bd.getId() + " bean created. " + bd.getClassName() + " : " + obj.toString());
         return obj;
