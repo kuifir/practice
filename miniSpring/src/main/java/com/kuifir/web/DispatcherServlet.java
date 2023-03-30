@@ -5,16 +5,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DispatcherServlet extends HttpServlet {
 
+    private List<String> packageNames = new ArrayList<>();
+    private final Map<String, Object> controllerObjs = new HashMap<>();
+    private List<String> controllerNames = new ArrayList<>();
+    private final Map<String, Class<?>> controllerClasses = new HashMap<>();
+    private final List<String> urlMappingNames = new ArrayList<>();
+    private final Map<String, Method> mappingMethods = new HashMap<>();
     private Map<String, MappingValue> mappingValues;
     private final Map<String, Class<?>> mappingClz = new HashMap<>();
     private final Map<String, Object> mappingObjs = new HashMap<>();
@@ -30,50 +35,105 @@ public class DispatcherServlet extends HttpServlet {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        Resource rs = new ClassPathXmlResource(xmlPath);
-        XmlConfigReader xmlConfigReader = new XmlConfigReader();
-        mappingValues = xmlConfigReader.loadConfig(rs);
+        this.packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
         Refresh();
     }
 
 
     //对所有的mappingValues中注册的类进行实例化，默认构造函数
     protected void Refresh() {
-        for (Map.Entry<String,MappingValue> entry : mappingValues.entrySet()) {
-            String id = entry.getKey();
-            String className = entry.getValue().getClz();
-            Object obj = null;
-            Class<?> clz = null;
-            try {
-                clz = Class.forName(className);
-                obj = clz.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
+        initController();// 初始化 controller
+        initMapping();// 初始化 url 映射
+
+    }
+
+    protected void initMapping() {
+        for (String controllerName : this.controllerNames) {
+            if(!controllerClasses.containsKey(controllerName)){
+                continue;
             }
-            mappingClz.put(id, clz);
-            mappingObjs.put(id, obj);
+            Class<?> clazz = this.controllerClasses.get(controllerName);
+            Object obj = this.controllerObjs.get(controllerName);
+            Method[] methods = clazz.getDeclaredMethods();
+            for (Method method : methods) {
+                boolean isRequestMapping = method.isAnnotationPresent(RequestMapping.class);
+                if (isRequestMapping) {
+                    String urlmapping = method.getAnnotation(RequestMapping.class).value();
+                    this.urlMappingNames.add(urlmapping);
+                    this.mappingObjs.put(urlmapping, obj);
+                    this.mappingMethods.put(urlmapping, method);
+                }
+
+            }
         }
     }
+
+
+    protected void initController() {
+        //扫描包，获取所有类名
+        this.controllerNames = scanPackages(this.packageNames);
+        for (String controllerName : this.controllerNames) {
+            Object obj;
+            Class<?> clz = null;
+            try {
+                clz = Class.forName(controllerName); //加载类
+                if(clz.isInterface()){
+                    continue;
+                }
+                this.controllerClasses.put(controllerName, clz);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                obj = clz.getDeclaredConstructor().newInstance(); //实例化bean
+                this.controllerObjs.put(controllerName, obj);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private List<String> scanPackages(List<String> packages) {
+        List<String> tempControllerNames = new ArrayList<>();
+        for (String packageName : packages) {
+            tempControllerNames.addAll(scanPackage(packageName));
+        }
+        return tempControllerNames;
+    }
+
+    private Collection<String> scanPackage(String packageName) {
+        List<String> tempControllerNames = new ArrayList<>();
+        URL url = this.getClass().getClassLoader().getResource("/" + packageName.replaceAll("\\.", "/"));
+        File dir = new File(url.getFile());
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            if (file.isDirectory()) {
+                scanPackage(packageName + "." + file.getName());
+            } else {
+                String controllerName = packageName + "." + file.getName().replace(".class", "");
+                tempControllerNames.add(controllerName);
+            }
+        }
+        return tempControllerNames;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String servletPath = request.getServletPath(); //获取请求的path
-        String msg ="http.method_get_not_found";
-        if(!this.mappingValues.containsKey(servletPath)){
+        String msg = "http.method_get_not_found";
+        if (!this.urlMappingNames.contains(servletPath)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, msg);
+            return;
         }
-        Class<?> clz = this.mappingClz.get(servletPath); // 获取bean类定义
-        Object obj = this.mappingObjs.get(servletPath); //获取bean实例
-        String methodName = this.mappingValues.get(servletPath).getMethod(); //获取调用方法名
-
-        Object objResult;
+        Object obj;
+        Object objResult = null;
         try {
-            Method method = clz.getMethod(methodName);
+            Method method = this.mappingMethods.get(servletPath);
+            obj = this.mappingObjs.get(servletPath);
             objResult = method.invoke(obj);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        //将方法返回值写入response
-         response.getWriter().append(objResult.toString());
+        response.getWriter().append(objResult.toString());
     }
 
     @Override
