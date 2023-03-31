@@ -38,7 +38,12 @@ public class DefaultListableBeanFactory
         for (String beanName : this.beanDefinitionNames) {
             boolean matchFound = false;
             BeanDefinition mbd = this.getBeanDefinition(beanName);
-            Class<?> classToMatch = mbd.getClass();
+            Class<?> classToMatch = null;
+            try {
+                classToMatch = Class.forName(mbd.getClassName());
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             matchFound = type.isAssignableFrom(classToMatch);
 
             if (matchFound) {

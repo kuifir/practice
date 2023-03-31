@@ -1,5 +1,7 @@
 package com.kuifir.web;
 
+import com.kuifir.beans.BeansException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,11 +26,13 @@ public class DispatcherServlet extends HttpServlet {
     private final Map<String, Class<?>> mappingClz = new HashMap<>();
     private final Map<String, Object> mappingObjs = new HashMap<>();
     private String sContextConfigLocation;
+    private WebApplicationContext webApplicationContext;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         sContextConfigLocation = config.getInitParameter("contextConfigLocation");
+        this.webApplicationContext = (WebApplicationContext) config.getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         URL xmlPath = null;
         try {
             xmlPath = config.getServletContext().getResource(sContextConfigLocation);
@@ -129,6 +133,15 @@ public class DispatcherServlet extends HttpServlet {
         try {
             Method method = this.mappingMethods.get(servletPath);
             obj = this.mappingObjs.get(servletPath);
+            String[] beanNamesForType = webApplicationContext.getBeanNamesForType(obj.getClass());
+            try {
+                Object bean = webApplicationContext.getBean(beanNamesForType[0]);
+                if(null != bean){
+                    obj = obj.getClass().cast(bean);
+                }
+            } catch (BeansException e) {
+                throw new RuntimeException(e);
+            }
             objResult = method.invoke(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);

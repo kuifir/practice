@@ -51,6 +51,11 @@ public class AServiceImpl implements AService {
     }
 
     @Override
+    public String getBeanName() {
+        return name;
+    }
+
+    @Override
     public String toString() {
         return "AServiceImpl{" +
                 "name='" + name + '\'' +
