@@ -38,7 +38,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     }
 
     @Override
-    void registerListeners() {
+    public void registerListeners() {
         String[] bdNames = this.beanFactory.getBeanDefinitionNames();
         for (String bdName : bdNames) {
             Object bean = null;
@@ -54,13 +54,13 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     }
 
     @Override
-    void initApplicationEventPublisher() {
+    public void initApplicationEventPublisher() {
         ApplicationEventPublisher aep = new SimpleApplicationEventPublisher();
         this.setApplicationEventPublisher(aep);
     }
 
     @Override
-    void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
         String[] bdNames = this.beanFactory.getBeanDefinitionNames();
         for (String bdName : bdNames) {
             BeanDefinition bd = this.beanFactory.getBeanDefinition(bdName);
@@ -91,7 +91,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     }
 
     @Override
-    void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
+    public void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
         System.out.println("try to registerBeanPostProcessors");
         String[] bdNames = this.beanFactory.getBeanDefinitionNames();
         for (String bdName : bdNames) {
@@ -117,12 +117,12 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     }
 
     @Override
-    void onRefresh() {
+    public void onRefresh() {
         this.beanFactory.refresh();
     }
 
     @Override
-    void finishRefresh() {
+    public void finishRefresh() {
         publishEvent(new ContextRefreshedEvent(this));
     }
 

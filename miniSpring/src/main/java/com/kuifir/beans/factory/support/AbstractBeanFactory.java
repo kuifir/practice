@@ -49,7 +49,8 @@ public abstract class AbstractBeanFactory
                 // 如果毛坯都没有，则创建bean实例，并注册
                 BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
                 if (null == beanDefinition) {
-                    throw new BeansException("No bean." + beanName);
+                    return null;
+//                    throw new BeansException("No bean." + beanName);
                 }
                 singleton = createBean(beanDefinition);
                 this.registerSingleton(beanDefinition.getId(), singleton);
@@ -110,7 +111,7 @@ public abstract class AbstractBeanFactory
         try {
             // handle constructor
             ConstructorArgumentValues argumentValues = bd.getConstructorArgumentValues();
-            if (!argumentValues.isEmpty()) {
+            if (null != argumentValues && !argumentValues.isEmpty()) {
                 Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
                 Object[] paramValues = new Object[argumentValues.getArgumentCount()];
                 for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
@@ -169,7 +170,7 @@ public abstract class AbstractBeanFactory
     }
     private void handleProperties(BeanDefinition bd, Class<?> clz, Object obj) {
         PropertyValues propertyValues = bd.getPropertyValues();
-        if (!propertyValues.isEmpty()) {
+        if (null != propertyValues && !propertyValues.isEmpty()) {
             for (int i = 0; i < propertyValues.size(); i++) {
                 PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
                 String pName = propertyValue.getName();

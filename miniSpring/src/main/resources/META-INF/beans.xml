@@ -21,6 +21,4 @@
     <!--打开注解方式-->
     <bean id="autowiredAnnotationBeanPostProcessor" class="com.kuifir.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 
-    <bean id = "helloWorldBean" class="com.kuifir.test.HelloWorldBean">
-    </bean>
 </beans>
