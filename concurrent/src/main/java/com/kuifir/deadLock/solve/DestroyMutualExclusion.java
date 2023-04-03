@@ -2,99 +2,131 @@ package com.kuifir.deadLock.solve;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.SplittableRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 破坏占用且等待条件
- * 从理论上讲，要破坏这个条件，可以一次性申请所有资源
+ * 破坏不能抢占
  * <p>
- * “同时申请”这个操作是一个临界区，我们也需要一个角色（Java 里面的类）来管理这个临界区，我们就把这个角色定为 Allocator。
- * 它有两个重要功能，分别是：同时申请资源 apply() 和同时释放资源 free()。
- * 账户 Account 类里面持有一个 Allocator 的单例（必须是单例，只能由一个人来分配资源）。
- * 当账户 Account 在执行转账操作的时候，首先向 Allocator 同时申请转出账户和转入账户这两个资源，成功后再锁定这两个资源；
- * 当转账操作执行完，释放锁之后，我们需通知 Allocator 同时释放转出账户和转入账户这两个资源。
+ * 这个方案 synchronized 没有办法解决。
+ * 原因是 synchronized 申请资源的时候，如果申请不到，线程直接进入阻塞状态了，
+ * 而线程进入阻塞状态，啥都干不了，也释放不了线程已经占有的资源。
+ * <p>
+ * 但我们希望的是：
+ * 对于“不可抢占”这个条件，占用部分资源的线程进一步申请其他资源时,
+ * 如果申请不到，可以主动释放它占有的资源，这样不可抢占这个条件就破坏掉了。
+ * <p>
+ * 如果我们重新设计一把互斥锁去解决这个问题，那该怎么设计呢？
+ * 我觉得有三种方案。
+ * 能够响应中断。synchronized 的问题是，持有锁 A 后，如果尝试获取锁 B 失败，那么线程就进入阻塞状态，一旦发生死锁，就没有任何机会来唤醒阻塞的线程。但如果阻塞状态的线程能够响应中断信号，也就是说当我们给阻塞的线程发送中断信号的时候，能够唤醒它，那它就有机会释放曾经持有的锁 A。这样就破坏了不可抢占条件了。
+ * 支持超时。如果线程在一段时间之内没有获取到锁，不是进入阻塞状态，而是返回一个错误，那这个线程也有机会释放曾经持有的锁。这样也能破坏不可抢占条件。
+ * 非阻塞地获取锁。如果尝试获取锁失败，并不进入阻塞状态，而是直接返回，那这个线程也有机会释放曾经持有的锁。这样也能破坏不可抢占条件。
+ * 这三种方案可以全面弥补 synchronized 的问题。
+ * 到这里相信你应该也能理解了，这三个方案就是“重复造轮子”的主要原因，体现在 API 上，就是 Lock 接口的三个方法。
+ * 详情如下：
+ * // 支持中断的API void lockInterruptibly() throws InterruptedException;
+ * // 支持超时的API boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
+ * // 支持非阻塞获取锁的API boolean tryLock();
+ * <p>
+ * 如何保证可见性Java SDK 里面 Lock 的使用，
+ * 有一个经典的范例，就是try{}finally{}，需要重点关注的是在 finally 里面释放锁。
+ * 这个范例无需多解释，你看一下下面的代码就明白了。
+ * 但是有一点需要解释一下，那就是可见性是怎么保证的。
+ * 你已经知道 Java 里多线程的可见性是通过 Happens-Before 规则保证的，
+ * 而 synchronized 之所以能够保证可见性，
+ * 也是因为有一条 synchronized 相关的规则：synchronized 的解锁 Happens-Before 于后续对这个锁的加锁。
+ * 那 Java SDK 里面 Lock 靠什么保证可见性呢？
+ * 例如在下面的代码中，线程 T1 对 value 进行了 +=1 操作，那后续的线程 T2 能够看到 value 的正确结果吗？
+ * <p>
+ * class X {
+ * private final Lock rtl =
+ * new ReentrantLock();
+ * int value;
+ * public void addOne() {
+ * // 获取锁
+ * rtl.lock();
+ * try {
+ * value+=1;
+ * } finally {
+ * // 保证锁能释放
+ * rtl.unlock();
+ * }
+ * }
+ * }
+ * <p>
+ *
+ * @see Lock#lockInterruptibly()
+ * @see Lock#tryLock(long, TimeUnit)
+ * @see Lock#tryLock()
  */
 public class DestroyMutualExclusion {
-    private static final Allocator allocator = new Allocator();
-
     public static void main(String[] args) {
-        Account a = new Account(allocator, 100);
-        Account b = new Account(allocator, 100);
+        Account a = new Account(100);
+        Account b = new Account(100);
         Runnable runnable = () -> {
-            a.transfer(b, 10);
+            try {
+                a.transfer(b, 10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         };
         Runnable runnable2 = () -> {
-            b.transfer(a, 10);
+            try {
+                b.transfer(a, 10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         };
         new Thread(runnable).start();
         new Thread(runnable2).start();
     }
 
-    static class Allocator {
-        private final List<Object> als = new ArrayList<>();
-
-        // 一次性申请所有资源
-        synchronized boolean apply(Object from, Object to) {
-            if (als.contains(from) || als.contains(to)) {
-                return false;
-            } else {
-                als.add(from);
-                als.add(to);
-            }
-            return true;
-        }
-
-        synchronized void free(Object from, Object to) {
-            als.remove(from);
-            als.remove(to);
-        }
-
-        private Allocator() {
-
-        }
-    }
 
     static class Account {
-        private final Allocator allocator;
         private int balance;
+        private final Lock lock = new ReentrantLock();
 
-        public Account(Allocator allocator) {
-            this.allocator = allocator;
-        }
 
-        Account(Allocator allocator, int balance) {
-            this.allocator = allocator;
+        Account(int balance) {
             this.balance = balance;
         }
 
         // 转账
-        void transfer(Account target, int amt) {
+        void transfer(Account target, int amt) throws InterruptedException {
             // 一次性申请转出账户和转入账户，直到成功
-            while (!allocator.apply(this, target)) ;
-            try {
-                // 锁定转出账户
-                synchronized (this) {
-                    Thread.sleep(1000L);
-                    // 锁定转入账户
-                    synchronized (target) {
-                        if (this.balance > amt) {
-                            this.balance -= amt;
-                            target.balance += amt;
+            SplittableRandom random = new SplittableRandom();
+            while (true) {
+                    // 不加随机时间会活锁
+                if (this.lock.tryLock(random.nextLong(1000), TimeUnit.MILLISECONDS)) {
+                    System.out.format("%s ：获取{%s}的锁%n", Thread.currentThread().getName(), this);
+                    try {
+                        // 锁定转出账户
+                        Thread.sleep(1000L);
+                        // 锁定转入账户
+                        //  不加随机时间会活锁
+                        if (target.lock.tryLock(random.nextLong(1000), TimeUnit.MICROSECONDS)) {
+                            System.out.format("%s ： 获取{%s}的锁%n", Thread.currentThread().getName(), target);
+                            try {
+                                if (this.balance > amt) {
+                                    this.balance -= amt;
+                                    target.balance += amt;
+                                    return;
+                                }
+                            } finally {
+                                target.lock.unlock();
+                            }
+
                         }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        this.lock.unlock();
                     }
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } finally {
-                allocator.free(this, target);
             }
-        }
-
-        public int getBalance() {
-            return balance;
-        }
-
-        public void setBalance(int balance) {
-            this.balance = balance;
         }
     }
 }

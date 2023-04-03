@@ -11,8 +11,8 @@ package com.kuifir.deadLock.solve;
 public class BreakCycleWait {
 
     public static void main(String[] args) {
-        Account a = new Account(1,100);
-        Account b = new Account(2,100);
+        Account a = new Account(1, 100);
+        Account b = new Account(2, 100);
         Runnable runnable = () -> {
             a.transfer(b, 10);
         };
@@ -41,14 +41,18 @@ public class BreakCycleWait {
                 right = this;          //       ⑤
             }                          //       ⑥
             // 锁定序号小的账户
+            System.out.format("%s : 准备获取{%s}的锁%n", Thread.currentThread().getName(), left);
             synchronized (left) {
+                System.out.format("%s : 获取{%s}的锁%n", Thread.currentThread().getName(), left);
                 try {
                     Thread.sleep(1000L);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 // 锁定序号大的账户
+                System.out.format("%s : 准备获取{%s}的锁%n", Thread.currentThread().getName(), right);
                 synchronized (right) {
+                    System.out.format("%s : 获取{%s}的锁%n", Thread.currentThread().getName(), right);
                     if (this.balance > amt) {
                         this.balance -= amt;
                         target.balance += amt;
