@@ -1,4 +1,4 @@
-package com.kuifir.practice.semaphore;
+package com.kuifir.juc.semaphore;
 
 import java.util.List;
 import java.util.Random;
