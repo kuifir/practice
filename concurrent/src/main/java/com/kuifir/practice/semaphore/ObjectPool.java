@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -51,15 +52,12 @@ public class ObjectPool<T, R> {
     public static void main(String[] args) {
         ObjectPool<Long, String> pool = new ObjectPool<>(10, () -> new Random().nextLong());
         // 通过对象获取t,然后执行
-        IntStream.range(0, 11).parallel()
-                .forEach(i -> {
-                    Thread thread = new Thread(() -> pool.exec(t -> {
-                        System.out.println(t);
-                        return t.toString();
-                    }));
-                    thread.start();
-                });
-        CompletableFuture<Object> objectCompletableFuture = new CompletableFuture<>();
-
+        List<CompletableFuture<Void>> completableFutures = IntStream.range(0, 11)
+                .mapToObj(i -> CompletableFuture.runAsync(() -> pool.exec(t -> {
+                    System.out.println(t);
+                    return t.toString();
+                })))
+                .collect(Collectors.toList());
+        completableFutures.forEach(CompletableFuture::join);
     }
 }

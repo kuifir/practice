@@ -16,7 +16,7 @@ public class TaskServiceImpl<T, P> implements TaskService<T, P> {
      */
     @Override
     public Future<?> submit(Task<T, P> task, P param) {
-        FutureTask<T> future = new FutureTask<T>();
+        FutureTask<T> future = new FutureTask<>();
         new Thread(() -> {
             T result = task.doTask(param);
             future.finish(result);
