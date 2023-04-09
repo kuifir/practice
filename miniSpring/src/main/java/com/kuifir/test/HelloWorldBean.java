@@ -14,9 +14,9 @@ public class HelloWorldBean {
         return baseserviceAnnotation.toString();
     }
     @RequestMapping("/test2")
-    public Date param(Date date) {
-        System.out.println("date　：" + date.toString());
-        return date;
+    public Date param(Test2Param test2Param) {
+        System.out.println("date　：" + test2Param.getDate().toString());
+        return test2Param.getDate();
     }
 
     public String doPost() {

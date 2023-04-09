@@ -69,7 +69,7 @@ public class BeanWrapperImpl extends PropertyEditorRegistrySupport {
                         + propertyName.substring(1), propertyClz);
                 //获取读属性的方法，按照约定为getXxxx（）
                 this.readMethod = clz.getDeclaredMethod("get" + propertyName.substring(0, 1).toUpperCase()
-                        + propertyName.substring(1), propertyClz);
+                        + propertyName.substring(1));
             } catch (Exception e) {
                 e.printStackTrace();
             }

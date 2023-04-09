@@ -16,6 +16,7 @@ public class WebDataBinder {
     private Object target;
     private Class<?> clz;
     private String objectName;
+    BeanWrapperImpl propertyAccessor;
 
     public WebDataBinder(Object target) {
         this(target, "");
@@ -25,6 +26,7 @@ public class WebDataBinder {
         this.target = target;
         this.objectName = targetName;
         this.clz = target.getClass();
+        propertyAccessor=new BeanWrapperImpl(target);
     }
 
     // 核心绑定方法，将request里面的参数值绑定到目标对象的属性上
@@ -48,7 +50,7 @@ public class WebDataBinder {
 
     //设置属性值的工具
     protected BeanWrapperImpl getPropertyAccessor() {
-        return new BeanWrapperImpl(this.target);
+        return this.propertyAccessor;
     }
 
     protected void addBindValues(PropertyValues mpvs, HttpServletRequest request) {
