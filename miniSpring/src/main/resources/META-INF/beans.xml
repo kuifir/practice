@@ -21,4 +21,5 @@
     <!--打开注解方式-->
     <bean id="autowiredAnnotationBeanPostProcessor" class="com.kuifir.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 
+    <bean id="webBindingInitializer" class="com.kuifir.test.DateInitializer" />
 </beans>
