@@ -19,7 +19,21 @@
     <bean id="baseserviceAnnotation" class="com.kuifir.test.BaseService">
     </bean>
     <!--打开注解方式-->
-    <bean id="autowiredAnnotationBeanPostProcessor" class="com.kuifir.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+    <bean id="autowiredAnnotationBeanPostProcessor"
+          class="com.kuifir.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
-    <bean id="webBindingInitializer" class="com.kuifir.test.DateInitializer" />
+    <bean id="webBindingInitializer" class="com.kuifir.test.DateInitializer"/>
+
+    <bean id="messageConverter" class="com.kuifir.http.converter.DefaultHttpMessageConverter">
+        <property type="com.kuifir.util.ObjectMapper" name="objectMapper" ref="objectMapper"/>
+    </bean>
+    <bean id="objectMapper" class="com.kuifir.util.DefaultObjectMapper">
+        <property type="String" name="dateFormat" value="yyyy/MM/dd"/>
+        <property type="String" name="decimalFormat" value="###.##"/>
+    </bean>
+
+    <bean id="handlerAdapter" class="com.kuifir.web.servlet.RequestMappingHandlerAdapter">
+        <property type="com.kuifir.http.converter.HttpMessageConverter" name="messageConverter" ref="messageConverter"/>
+        <property type="com.kuifir.web.WebBindingInitializer" name="webBindingInitializer" ref="webBindingInitializer"/>
+    </bean>
 </beans>

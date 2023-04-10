@@ -1,5 +1,6 @@
 package com.kuifir.web;
 
+import com.kuifir.beans.BeansException;
 import com.kuifir.web.servlet.*;
 
 import javax.servlet.ServletConfig;
@@ -21,6 +22,8 @@ public class DispatcherServlet extends HttpServlet {
     private HandlerMapping handlerMapping;
     private HandlerAdapter handlerAdapter;
     public static final String WEB_APPLICATION_CONTEXT_ATTRIBUTE = DispatcherServlet.class.getName() + ".CONTEXT";
+    public static final String HANDLER_MAPPING_BEAN_NAME = "handlerMapping";
+    public static final String HANDLER_ADAPTER_BEAN_NAME = "handlerAdapter";
 
 
     @Override
@@ -51,7 +54,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void initHandlerAdapters(WebApplicationContext wac) {
-        this.handlerAdapter = new RequestMappingHandlerAdapter(wac);
+        try {
+            this.handlerAdapter = (HandlerAdapter) wac.getBean(HANDLER_ADAPTER_BEAN_NAME);
+        } catch (BeansException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
