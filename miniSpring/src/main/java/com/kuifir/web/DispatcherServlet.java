@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
@@ -21,9 +22,12 @@ public class DispatcherServlet extends HttpServlet {
     private WebApplicationContext parentApplicationContext;
     private HandlerMapping handlerMapping;
     private HandlerAdapter handlerAdapter;
+
+    private ViewResolver viewResolver;
     public static final String WEB_APPLICATION_CONTEXT_ATTRIBUTE = DispatcherServlet.class.getName() + ".CONTEXT";
     public static final String HANDLER_MAPPING_BEAN_NAME = "handlerMapping";
     public static final String HANDLER_ADAPTER_BEAN_NAME = "handlerAdapter";
+    public static final String VIEW_RESOLVER_BEAN_NAME = "viewResolver";
 
 
     @Override
@@ -47,6 +51,15 @@ public class DispatcherServlet extends HttpServlet {
     protected void Refresh() {
         initHandlerMappings(this.webApplicationContext);
         initHandlerAdapters(this.webApplicationContext);
+        initViewResolvers(this.webApplicationContext);
+    }
+
+    protected void initViewResolvers(WebApplicationContext wac) {
+        try {
+            this.viewResolver = (ViewResolver) wac.getBean(VIEW_RESOLVER_BEAN_NAME);
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void initHandlerMappings(WebApplicationContext wac) {
@@ -74,7 +87,7 @@ public class DispatcherServlet extends HttpServlet {
 
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HandlerMethod handlerMethod;
-
+        ModelAndView mv;
         handlerMethod = this.handlerMapping.getHandler(request);
         if (handlerMethod == null) {
             return;
@@ -82,6 +95,32 @@ public class DispatcherServlet extends HttpServlet {
 
         HandlerAdapter ha = this.handlerAdapter;
 
-        ha.handle(request, response, handlerMethod);
+        mv = ha.handle(request, response, handlerMethod);
+
+        if (null != mv) {
+            render(request, response, mv);
+        }
+    }
+
+    //用jsp 进行render
+    protected void render(HttpServletRequest request, HttpServletResponse response, ModelAndView mv) throws Exception {
+        String sTarget = mv.getViewName();
+        //获取model，写到request的Attribute中：
+        Map<String, Object> modelMap = mv.getModel();
+        View view = resolveViewName(sTarget, modelMap, request);
+        if (null != view) {
+            view.render(modelMap, request, response);
+        }
+    }
+
+    protected View resolveViewName(String viewName, Map<String, Object> model,
+                                   HttpServletRequest request) throws Exception {
+        if (this.viewResolver != null) {
+            View view = viewResolver.resolveViewName(viewName);
+            if (view != null) {
+                return view;
+            }
+        }
+        return null;
     }
 }

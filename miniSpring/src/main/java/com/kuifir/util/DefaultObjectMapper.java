@@ -32,6 +32,7 @@ public class DefaultObjectMapper implements ObjectMapper {
 
     @Override
     public String writeValuesAsString(Object obj) {
+        if (obj instanceof Date date) return date.toString();
         String sJsonStr = "{";
 
         Class<?> clz = obj.getClass();
@@ -46,9 +47,7 @@ public class DefaultObjectMapper implements ObjectMapper {
             try {
                 field.setAccessible(true);
                 value = field.get(obj);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
             }
             type = field.getType();
