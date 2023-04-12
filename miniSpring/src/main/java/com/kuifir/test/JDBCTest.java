@@ -1,0 +1,160 @@
+package com.kuifir.test;
+
+import com.kuifir.jdbc.core.JDBCTemplate;
+import com.kuifir.jdbc.core.JDBCTemplateWithoutFuntion;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class JDBCTest {
+    public static final String QUERYSQL = "select * from user ";
+    public static final String CONDITION = " where id = ? ";
+    public static final String LIMIT = " limit 3 ";
+
+    JDBCTemplate jdbcTemplate = new JDBCTemplate();
+
+    @Disabled
+    public static <T extends Statement> Object apply(String sql, T statement) {
+        ResultSet resultSet = null;
+        try {
+            if (statement instanceof PreparedStatement statement1){
+                resultSet = statement1.executeQuery();
+            }else {
+                statement.executeQuery(sql);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        List<User> userList = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setBirthday(resultSet.getDate("birthday"));
+                user.setSex(resultSet.getInt("sex"));
+                user.setAddress(resultSet.getString("address"));
+                userList.add(user);
+            }
+            return userList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void jdbcConnection() {
+        String url = "jdbc:mysql://localhost:3306/mybatis";
+        String username = "root";
+        String password = "123456";
+        // 注册驱动
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(QUERYSQL + LIMIT);
+             ResultSet resultSet = preparedStatement.executeQuery();
+        ) {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            if (null == connection) {
+                System.out.println("连接失败");
+                return;
+            }
+            List<User> users = new ArrayList<>();
+            while (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setBirthday(resultSet.getDate("birthday"));
+                user.setSex(resultSet.getInt("sex"));
+                user.setAddress(resultSet.getString("address"));
+                users.add(user);
+            }
+            users.forEach(System.out::println);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Test
+    public void jdbcTemplateWithoutFunction() {
+        JDBCTemplateWithoutFuntion jdbcTemplate = new UserWithoutFuntionJdbcImpl();
+        List<User> users = (List<User>) jdbcTemplate.query(QUERYSQL + LIMIT);
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void jdbcTemplateStatement() {
+        List<User> users = (List<User>) jdbcTemplate.query(statement -> apply(QUERYSQL + LIMIT, statement));
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void jdbcTemplatePrepareStatement() {
+        System.out.println(QUERYSQL + CONDITION + LIMIT);
+        List<User> users = (List<User>) jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{new Integer(10)},
+                statement -> apply(null, statement));
+        users.forEach(System.out::println);
+    }
+
+    public static class User {
+        private int id;
+        private String username;
+        private Date birthday;
+        private Integer sex;
+        private String address;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public Date getBirthday() {
+            return birthday;
+        }
+
+        public void setBirthday(Date birthday) {
+            this.birthday = birthday;
+        }
+
+        public void setSex(Integer sex) {
+            this.sex = sex;
+        }
+
+        public Integer getSex() {
+            return sex;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        @Override
+        public String toString() {
+            return "User{" +
+                    "id=" + id +
+                    ", username='" + username + '\'' +
+                    ", birthday=" + birthday +
+                    ", sex=" + sex +
+                    ", address='" + address + '\'' +
+                    '}';
+        }
+    }
+}

@@ -53,7 +53,12 @@ public class DefaultObjectMapper implements ObjectMapper {
             type = field.getType();
 
             if (value instanceof Date) {
-                LocalDate localDate = ((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate localDate;
+                if(value instanceof java.sql.Date sqlDate){
+                    localDate = sqlDate.toLocalDate();
+                }else {
+                    localDate = ((Date) value).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                }
                 strValue = localDate.format(this.datetimeFormatter);
             } else if (value instanceof BigDecimal || value instanceof Double || value instanceof Float) {
                 strValue = this.decimalFormatter.format(value);
