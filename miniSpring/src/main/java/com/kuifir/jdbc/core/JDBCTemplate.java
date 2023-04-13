@@ -1,21 +1,21 @@
 package com.kuifir.jdbc.core;
 
+import com.kuifir.beans.factory.annotation.Autowired;
+
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.function.Function;
 
 public class JDBCTemplate {
-    String url = "jdbc:mysql://localhost:3306/mybatis";
-    String username = "root";
-    String password = "123456";
+
+
+    @Autowired
+    private DataSource dataSource;
     public Object query(Function<Statement, Object> function) {
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
         // 注册驱动
-        try (Connection connection = DriverManager.getConnection(url, username, password);
+        try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement();
         ) {
             if (null == connection) {
@@ -34,7 +34,7 @@ public class JDBCTemplate {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        try (Connection connection = DriverManager.getConnection(url, username, password);
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql);
         ){
             for (int i = 0; i < args.length; i++) { //设置参数

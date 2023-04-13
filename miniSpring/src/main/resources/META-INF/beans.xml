@@ -38,13 +38,20 @@
     </bean>
 
 
-    <bean id="viewResolver" class="com.kuifir.web.servlet.view.InternalResourceViewResolver" >
-        <property type="String" name="viewClassName" value="com.kuifir.web.servlet.view.JstlView" />
-        <property type="String" name="contentType" value="ISO-8859-1" />
-        <property type="String" name="prefix" value="/jsp/" />
-        <property type="String" name="suffix" value=".jsp" />
+    <bean id="viewResolver" class="com.kuifir.web.servlet.view.InternalResourceViewResolver">
+        <property type="String" name="viewClassName" value="com.kuifir.web.servlet.view.JstlView"/>
+        <property type="String" name="contentType" value="ISO-8859-1"/>
+        <property type="String" name="prefix" value="/jsp/"/>
+        <property type="String" name="suffix" value=".jsp"/>
     </bean>
 
+    <bean id="dataSource" class="com.kuifir.jdbc.datasource.SingleConnectionDataSource">
+        <property type="String" name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property type="String" name="url" value="jdbc:mysql://localhost:3306/mybatis"/>
+        <property type="String" name="username" value="root"/>
+        <property type="String" name="password" value="123456"/>
+    </bean>
     <bean id="jdbcTemplate" class="com.kuifir.jdbc.core.JDBCTemplate"/>
+
     <bean id="test" class="com.kuifir.test.JDBCTest"/>
 </beans>
