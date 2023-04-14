@@ -1,7 +1,10 @@
 package com.kuifir.test;
 
+import com.kuifir.beans.BeansException;
+import com.kuifir.context.ClassPathXmlApplicationContext;
 import com.kuifir.jdbc.core.JDBCTemplate;
 import com.kuifir.jdbc.core.JDBCTemplateWithoutFuntion;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -15,16 +18,23 @@ public class JDBCTest {
     public static final String CONDITION = " where id = ? ";
     public static final String LIMIT = " limit 3 ";
 
-    JDBCTemplate jdbcTemplate = new JDBCTemplate();
+    private static JDBCTemplate jdbcTemplate = null;
+
+    @BeforeAll
+    public static void init() throws BeansException {
+        ClassPathXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("META-INF/beans.xml");
+        jdbcTemplate = (JDBCTemplate) applicationContext.getBean("jdbcTemplate");
+    }
 
     @Disabled
     public static <T extends Statement> Object apply(String sql, T statement) {
         ResultSet resultSet = null;
         try {
-            if (statement instanceof PreparedStatement statement1){
+            if (statement instanceof PreparedStatement statement1) {
                 resultSet = statement1.executeQuery();
-            }else {
-                statement.executeQuery(sql);
+            } else {
+                resultSet = statement.executeQuery(sql);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -32,18 +42,23 @@ public class JDBCTest {
         List<User> userList = new ArrayList<>();
         try {
             while (resultSet.next()) {
-                User user = new User();
-                user.setId(resultSet.getInt("id"));
-                user.setUsername(resultSet.getString("username"));
-                user.setBirthday(resultSet.getDate("birthday"));
-                user.setSex(resultSet.getInt("sex"));
-                user.setAddress(resultSet.getString("address"));
-                userList.add(user);
+                User user = createUser(resultSet);
             }
             return userList;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Disabled
+    private static User createUser(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setId(resultSet.getInt("id"));
+        user.setUsername(resultSet.getString("username"));
+        user.setBirthday(resultSet.getDate("birthday"));
+        user.setSex(resultSet.getInt("sex"));
+        user.setAddress(resultSet.getString("address"));
+        return user;
     }
 
     @Test
@@ -94,8 +109,16 @@ public class JDBCTest {
     @Test
     public void jdbcTemplatePrepareStatement() {
         System.out.println(QUERYSQL + CONDITION + LIMIT);
-        List<User> users = (List<User>) jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{new Integer(10)},
+        List<User> users = (List<User>) jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{10},
                 statement -> apply(null, statement));
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void jdbcTemplatePrepareStatementWithRowMapper() {
+        System.out.println(QUERYSQL + CONDITION + LIMIT);
+        List<User> users = jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{10},
+                (resultSet, rowNum) -> createUser(resultSet));
         users.forEach(System.out::println);
     }
 
