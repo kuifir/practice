@@ -4,22 +4,23 @@ import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PooledConnection implements Connection {
     private Connection connection;
-    private boolean active;
+    private AtomicBoolean active;
 
     public PooledConnection() {
     }
 
     public PooledConnection(Connection connection, boolean active) {
         this.connection = connection;
-        this.active = active;
+        this.active = new AtomicBoolean(active);
     }
 
     @Override
     public void close() throws SQLException {
-        this.active = false;
+        this.active.set(false);
     }
 
     @Override
@@ -37,16 +38,16 @@ public class PooledConnection implements Connection {
     }
 
     public boolean isActive() {
-        return active;
+        return active.get();
     }
 
     public void setActive(boolean active) {
-        this.active = active;
+        this.active = new AtomicBoolean(active);
     }
 
     @Override
     public Statement createStatement() throws SQLException {
-        return null;
+        return this.getConnection().createStatement();
     }
 
 

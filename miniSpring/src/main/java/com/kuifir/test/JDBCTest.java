@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class JDBCTest {
@@ -43,6 +46,7 @@ public class JDBCTest {
         try {
             while (resultSet.next()) {
                 User user = createUser(resultSet);
+                userList.add(user);
             }
             return userList;
         } catch (SQLException e) {
@@ -120,6 +124,19 @@ public class JDBCTest {
         List<User> users = jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{10},
                 (resultSet, rowNum) -> createUser(resultSet));
         users.forEach(System.out::println);
+    }
+
+    @Test
+    public void jdbcTemplatePrepareStatementWithRowMapperThread() {
+        System.out.println(QUERYSQL + CONDITION + LIMIT);
+        List<CompletableFuture<Void>> completableFutures = IntStream.range(0, 1000)
+                .mapToObj(i -> CompletableFuture.runAsync(() -> {
+                    List<User> users = jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{10},
+                            (resultSet, rowNum) -> createUser(resultSet));
+                    users.forEach(System.out::println);
+                }))
+                .collect(Collectors.toList());
+        completableFutures.forEach(CompletableFuture::join);
     }
 
     public static class User {

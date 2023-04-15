@@ -1,14 +1,16 @@
 package com.kuifir.jdbc.pool;
 
+import com.kuifir.util.CollectionUtils;
+
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -24,8 +26,11 @@ public class PooledDataSource implements DataSource {
     public PooledDataSource() {
     }
 
-    private void initPool() {
-        this.connections = new ArrayList<>(initialSize);
+    private synchronized void initPool() {
+        if (!CollectionUtils.isEmpty(connections)) {
+            return;
+        }
+        this.connections = new Vector<>(initialSize);
         try {
             for (int i = 0; i < initialSize; i++) {
                 Connection connect = DriverManager.getConnection(url, username, password);

@@ -184,14 +184,17 @@ public abstract class AbstractBeanFactory
                 if (!isRef) {
                     if ("String".equals(pType) || "java.lang.String".equals(pType)) {
                         paramTypes[0] = String.class;
+                        paramValues[0] = pValue;
                     } else if ("Integer".equals(pType) || "java.lang.Integer".equals(pType)) {
                         paramTypes[0] = Integer.class;
+                        paramValues[0] = Integer.valueOf((String) pValue);
                     } else if ("int".equals(pType)) {
                         paramTypes[0] = int.class;
+                        paramValues[0] = Integer.valueOf((String) pValue).intValue();
                     } else {
                         paramTypes[0] = String.class;
+                        paramValues[0] = pValue;
                     }
-                    paramValues[0] = pValue;
                 } else { // is ref, create the dependent beans
                     try {
                         paramTypes[0] = Class.forName(pType);
@@ -228,13 +231,14 @@ public abstract class AbstractBeanFactory
     public Boolean containsBean(String name) {
         return containsSingleton(name);
     }
+
     public void registerBean(String beanName, Object obj) {
         this.registerSingleton(beanName, obj);
     }
 
     @Override
     public void registerBeanDefinition(String name, BeanDefinition bd) {
-        this.beanDefinitionMap.put(name,bd);
+        this.beanDefinitionMap.put(name, bd);
         this.beanDefinitionNames.add(name);
 //        if (!bd.isLazyInit()) {
 //            try {
@@ -245,6 +249,7 @@ public abstract class AbstractBeanFactory
 //            }
 //        }
     }
+
     @Override
     public void removeBeanDefinition(String name) {
         this.beanDefinitionMap.remove(name);
