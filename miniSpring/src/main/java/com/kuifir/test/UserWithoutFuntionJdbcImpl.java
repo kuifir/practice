@@ -10,10 +10,10 @@ import java.util.List;
 public class UserWithoutFuntionJdbcImpl extends JDBCTemplateWithoutFuntion {
 
     protected Object doInStatement(ResultSet resultSet) {
-        List<JDBCTest.User> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
         try {
             while (resultSet.next()) {
-                JDBCTest.User user = new JDBCTest.User();
+                User user = new User();
                 user.setId(resultSet.getInt("id"));
                 user.setUsername(resultSet.getString("username"));
                 user.setBirthday(resultSet.getDate("birthday"));

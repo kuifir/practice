@@ -1,9 +1,12 @@
 package com.kuifir.test;
 
+import com.kuifir.batis.SqlSession;
+import com.kuifir.batis.SqlSessionFactory;
 import com.kuifir.beans.BeansException;
 import com.kuifir.context.ClassPathXmlApplicationContext;
 import com.kuifir.jdbc.core.JDBCTemplate;
 import com.kuifir.jdbc.core.JDBCTemplateWithoutFuntion;
+import com.kuifir.jdbc.core.RowMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -23,11 +26,14 @@ public class JDBCTest {
 
     private static JDBCTemplate jdbcTemplate = null;
 
+    private static SqlSessionFactory sqlSessionFactory = null;
+
     @BeforeAll
     public static void init() throws BeansException {
         ClassPathXmlApplicationContext applicationContext =
                 new ClassPathXmlApplicationContext("META-INF/beans.xml");
         jdbcTemplate = (JDBCTemplate) applicationContext.getBean("jdbcTemplate");
+        sqlSessionFactory = (SqlSessionFactory) applicationContext.getBean("sqlSessionFactory");
     }
 
     @Disabled
@@ -55,7 +61,7 @@ public class JDBCTest {
     }
 
     @Disabled
-    private static User createUser(ResultSet resultSet) throws SQLException {
+    public static User createUser(ResultSet resultSet) throws SQLException {
         User user = new User();
         user.setId(resultSet.getInt("id"));
         user.setUsername(resultSet.getString("username"));
@@ -121,7 +127,7 @@ public class JDBCTest {
     @Test
     public void jdbcTemplatePrepareStatementWithRowMapper() {
         System.out.println(QUERYSQL + CONDITION + LIMIT);
-        List<User> users = jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{10},
+        List<User> users = jdbcTemplate.queryList(QUERYSQL + CONDITION + LIMIT, new Object[]{10},
                 (resultSet, rowNum) -> createUser(resultSet));
         users.forEach(System.out::println);
     }
@@ -131,7 +137,7 @@ public class JDBCTest {
         System.out.println(QUERYSQL + CONDITION + LIMIT);
         List<CompletableFuture<Void>> completableFutures = IntStream.range(0, 1000)
                 .mapToObj(i -> CompletableFuture.runAsync(() -> {
-                    List<User> users = jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{10},
+                    List<User> users = jdbcTemplate.queryList(QUERYSQL + CONDITION + LIMIT, new Object[]{10},
                             (resultSet, rowNum) -> createUser(resultSet));
                     users.forEach(System.out::println);
                 }))
@@ -139,62 +145,14 @@ public class JDBCTest {
         completableFutures.forEach(CompletableFuture::join);
     }
 
-    public static class User {
-        private int id;
-        private String username;
-        private Date birthday;
-        private Integer sex;
-        private String address;
+    @Test
+    public void batisTest() {
+        String sqlid = "com.kuifir.test.HelloWorldBean.testBatis";
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        User user = sqlSession.selectOne(sqlid,
+                new Object[]{Integer.valueOf(10)},
+                (rs, rowNum) -> createUser(rs));
+        System.out.println(user);
 
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public Date getBirthday() {
-            return birthday;
-        }
-
-        public void setBirthday(Date birthday) {
-            this.birthday = birthday;
-        }
-
-        public void setSex(Integer sex) {
-            this.sex = sex;
-        }
-
-        public Integer getSex() {
-            return sex;
-        }
-
-        public String getAddress() {
-            return address;
-        }
-
-        public void setAddress(String address) {
-            this.address = address;
-        }
-
-        @Override
-        public String toString() {
-            return "User{" +
-                    "id=" + id +
-                    ", username='" + username + '\'' +
-                    ", birthday=" + birthday +
-                    ", sex=" + sex +
-                    ", address='" + address + '\'' +
-                    '}';
-        }
     }
 }

@@ -62,4 +62,8 @@
 
     <bean id="jdbcTemplate" class="com.kuifir.jdbc.core.JDBCTemplate"/>
 
+
+    <bean id="sqlSessionFactory" class="com.kuifir.batis.DefaultSqlSessionFactory" init-method="init">
+        <property type="String" name="mapperLocations" value="mapper"></property>
+    </bean>
 </beans>

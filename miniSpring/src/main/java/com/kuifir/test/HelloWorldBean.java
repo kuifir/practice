@@ -1,5 +1,7 @@
 package com.kuifir.test;
 
+import com.kuifir.batis.SqlSession;
+import com.kuifir.batis.SqlSessionFactory;
 import com.kuifir.beans.factory.annotation.Autowired;
 import com.kuifir.jdbc.core.JDBCTemplate;
 import com.kuifir.web.RequestMapping;
@@ -18,6 +20,9 @@ public class HelloWorldBean {
 
     @Autowired
     private JDBCTemplate jdbcTemplate;
+
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
     @RequestMapping("/test")
     @ResponseBody
@@ -40,20 +45,32 @@ public class HelloWorldBean {
         testParam.setDate(new Date());
         return testParam;
     }
+
     @RequestMapping("/error")
     public String errorPAge() {
         return "error";
     }
+
     @RequestMapping("/test/modelAndView")
     public ModelAndView testPageWithModel() {
-        return new ModelAndView("test","msg", "测试成功");
+        return new ModelAndView("test", "msg", "测试成功");
     }
 
     @RequestMapping("/test/jdbcTemplate")
     @ResponseBody
-    public JDBCTest.User test(){
-        List<JDBCTest.User> users = (List<JDBCTest.User>) jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{new Integer(10)},
+    public User test() {
+        List<User> users = (List<User>) jdbcTemplate.query(QUERYSQL + CONDITION + LIMIT, new Object[]{Integer.valueOf(10)},
                 statement -> apply(null, statement));
         return users.get(0);
+    }
+
+    @RequestMapping("/test/batis")
+    @ResponseBody
+    public User testBatis() {
+        String sqlid = "com.kuifir.test.HelloWorldBean.testBatis";
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        return sqlSession.selectOne(sqlid,
+                new Object[]{Integer.valueOf(10)},
+                (rs, rowNum) -> createUser(rs));
     }
 }
