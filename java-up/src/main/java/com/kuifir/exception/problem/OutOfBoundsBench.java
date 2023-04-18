@@ -8,8 +8,11 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.MICROSECONDS)
+/**
+ * 基准测试的结果可能会让你大吃一惊。没有抛出异常的用例，它能够支持的吞吐量要比抛出异常的用例大 1000 倍
+ */
+@BenchmarkMode(Mode.Throughput)
+@OutputTimeUnit(TimeUnit.SECONDS)
 @State(Scope.Thread)
 @Fork(1)
 public class OutOfBoundsBench {
@@ -34,7 +37,8 @@ public class OutOfBoundsBench {
     }
 
     public static void main(String[] args) throws RunnerException {
-        Options options = new OptionsBuilder().include(OutOfBoundsBench.class.getSimpleName())
+        Options options = new OptionsBuilder()
+                .include(OutOfBoundsBench.class.getSimpleName())
                 .build();
         new Runner(options).run();
     }
