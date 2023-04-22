@@ -7,7 +7,18 @@
     <groupId>com.kuifir</groupId>
     <artifactId>java-up</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>jpms.crypto</module>
+        <module>jpms.crypto.impl</module>
+        <module>jpms.crypto.use</module>
+    </modules>
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>com.kuifir</groupId>-->
+<!--            <artifactId>jpms.crypto</artifactId>-->
+<!--            <version>1.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
         <!--junit-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -33,45 +44,11 @@
 
     </dependencies>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.1</version>
-                    <configuration>
-                        <source>17</source>
-                        <target>17</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.openjdk.jmh</groupId>
-                            <artifactId>jmh-core</artifactId>
-                            <version>1.36</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.openjdk.jmh</groupId>
-                            <artifactId>jmh-generator-annprocess</artifactId>
-                            <version>1.36</version>
-                        </dependency>
-                    </dependencies>
-                    <executions>
-                        <execution>
-                            <id>jmh</id>
-                            <phase>test</phase>
-                            <goals>
-                                <goal>jmh</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -79,10 +56,20 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
+                    <release>17</release>
+                    <parameters>true</parameters>
                     <compilerArgs>
                         <arg>--enable-preview</arg>
                         <arg>--add-exports=jdk.incubator.vector/jdk.incubator.vector=ALL-UNNAMED</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <argLine>--enable-preview --add-modules=jdk.incubator.foreign,jdk.incubator.vector</argLine>
                 </configuration>
             </plugin>
         </plugins>
