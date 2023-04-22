@@ -4,6 +4,7 @@ import com.kuifir.beans.BeansException;
 import com.kuifir.beans.PropertyValue;
 import com.kuifir.beans.PropertyValues;
 import com.kuifir.beans.factory.BeanFactory;
+import com.kuifir.beans.factory.FactoryBean;
 import com.kuifir.beans.factory.config.BeanDefinition;
 import com.kuifir.beans.factory.config.ConfigurableBeanFactory;
 import com.kuifir.beans.factory.config.ConstructorArgumentValue;
@@ -18,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractBeanFactory
-        extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory, BeanDefinitionRegistry {
+        extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory, BeanDefinitionRegistry {
 
     protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
     protected List<String> beanDefinitionNames = new ArrayList<>();
@@ -41,6 +42,7 @@ public abstract class AbstractBeanFactory
     public Object getBean(String beanName) throws BeansException {
         // 先尝试直接拿Bean实例
         Object singleton = this.getSingleton(beanName);
+
         //如果此时还没有这个Bean的实例，则获取它的定义来创建实例
         if (null == singleton) {
             // 如果没有实例，则尝试从毛坯实例中获取
@@ -52,21 +54,47 @@ public abstract class AbstractBeanFactory
                     return null;
 //                    throw new BeansException("No bean." + beanName);
                 }
+
                 singleton = createBean(beanDefinition);
+
                 this.registerSingleton(beanDefinition.getId(), singleton);
+
                 // 进行beanpostprocessor处理
                 // step 1: postProcessBeforeInitialization
                 applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+
                 // step 2: afterPropertiesSet
+
                 // step 3: init-method
                 if (beanDefinition.getInitMethodName() != null && !beanDefinition.equals("")) {
                     invokeInitMethod(beanDefinition, singleton);
                 }
+
                 // step 4: postProcessAfterInitialization
                 applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
         }
+        else {
+//            System.out.println("bean exist -------------- " + beanName + "----------------"+singleton);
+        }
+        //process Factory Bean
+        if (singleton instanceof FactoryBean) {
+//            System.out.println("factory bean -------------- " + beanName + "----------------"+singleton);
+            return this.getObjectForBeanInstance(singleton, beanName);
+        }
+        else {
+//            System.out.println("normal bean -------------- " + beanName + "----------------"+singleton);
+        }
         return singleton;
+    }
+
+    protected Object getObjectForBeanInstance(Object beanInstance, String beanName) {
+        // Now we have the bean instance, which may be a normal bean or a FactoryBean.
+        if (!(beanInstance instanceof FactoryBean<?> factory)) {
+            return beanInstance;
+        }
+
+        return getObjectFromFactoryBean(factory, beanName);
     }
 
     private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {

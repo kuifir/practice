@@ -50,23 +50,38 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     protected ModelAndView invokeHandlerMethod(HttpServletRequest request, HttpServletResponse response,
                                        HandlerMethod handlerMethod) throws Exception {
         ModelAndView mav = null;
+
         WebDataBinderFactory binderFactory = new WebDataBinderFactory();
+
         Parameter[] methodParameters = handlerMethod.getMethod().getParameters();
         Object[] methodParamObjs = new Object[methodParameters.length];
+
         int i = 0;
         for (Parameter methodParameter : methodParameters) {
-            Object methodParamObj = methodParameter.getType().getDeclaredConstructor().newInstance();
-            WebDataBinder webDataBinder = binderFactory.createBinder(request, methodParamObj, methodParameter.getName());
-            webBindingInitializer.initBinder(webDataBinder);
-            webDataBinder.bind(request);
-            methodParamObjs[i] = methodParamObj;
+            if (methodParameter.getType() != HttpServletRequest.class && methodParameter.getType() != HttpServletResponse.class) {
+                Object methodParamObj = methodParameter.getType().getDeclaredConstructor().newInstance();
+                WebDataBinder webDataBinder = binderFactory.createBinder(request, methodParamObj, methodParameter.getName());
+                webBindingInitializer.initBinder(webDataBinder);
+                webDataBinder.bind(request);
+                methodParamObjs[i] = methodParamObj;
+            } else if (methodParameter.getType() == HttpServletRequest.class) {
+                methodParamObjs[i] = request;
+            } else if (methodParameter.getType() == HttpServletResponse.class) {
+                methodParamObjs[i] = response;
+            }
+
             i++;
         }
+
         Method invocableMethod = handlerMethod.getMethod();
         Object returnObj = invocableMethod.invoke(handlerMethod.getBean(), methodParamObjs);
+        Class<?> returnType = invocableMethod.getReturnType();
+
         //如果是ResponseBody注解，仅仅返回值，则转换数据格式后直接写到response
         if (invocableMethod.isAnnotationPresent(ResponseBody.class)) { //ResponseBody
             this.messageConverter.write(returnObj, response);
+        }else if (returnType == void.class) {
+
         }else {
             //返回的是前端页面
             if (returnObj instanceof ModelAndView) {

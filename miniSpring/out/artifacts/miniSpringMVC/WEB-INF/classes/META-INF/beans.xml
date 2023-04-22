@@ -52,6 +52,7 @@
 <!--        <property type="String" name="password" value="123456"/>-->
 <!--    </bean>-->
 
+    <!--jdbcTemplate-->
     <bean id="dataSource" class="com.kuifir.jdbc.pool.PooledDataSource">
         <property type="String" name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
         <property type="String" name="url" value="jdbc:mysql://localhost:3306/mybatis"/>
@@ -65,5 +66,14 @@
 
     <bean id="sqlSessionFactory" class="com.kuifir.batis.DefaultSqlSessionFactory" init-method="init">
         <property type="String" name="mapperLocations" value="mapper"></property>
+    </bean>
+
+    <!--aop-->
+<!--    <bean id="action" class="com.kuifir.test.service.impl.Action1"/>-->
+
+    <bean id="realaction" class="com.kuifir.test.service.impl.Action1"/>
+
+    <bean id="action" class="com.kuifir.aop.ProxyFactoryBean">
+        <property type="java.lang.Object" name="target" ref="realaction"/>
     </bean>
 </beans>
