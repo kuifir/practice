@@ -1,5 +1,5 @@
 package com.kuifir.aop;
 
 public interface AopProxyFactory<T> {
-    AopProxy<T> createAopProxy(T target);
+    AopProxy<T> createAopProxy(T target, Advisor advisor);
 }

@@ -3,7 +3,7 @@ package com.kuifir.beans.factory.support;
 import com.kuifir.beans.BeansException;
 import com.kuifir.beans.PropertyValue;
 import com.kuifir.beans.PropertyValues;
-import com.kuifir.beans.factory.BeanFactory;
+import com.kuifir.beans.factory.BeanFactoryAware;
 import com.kuifir.beans.factory.FactoryBean;
 import com.kuifir.beans.factory.config.BeanDefinition;
 import com.kuifir.beans.factory.config.ConfigurableBeanFactory;
@@ -59,6 +59,9 @@ public abstract class AbstractBeanFactory
 
                 this.registerSingleton(beanDefinition.getId(), singleton);
 
+                if (singleton instanceof BeanFactoryAware) {
+                    ((BeanFactoryAware) singleton).setBeanFactory(this);
+                }
                 // 进行beanpostprocessor处理
                 // step 1: postProcessBeforeInitialization
                 applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
@@ -66,7 +69,7 @@ public abstract class AbstractBeanFactory
                 // step 2: afterPropertiesSet
 
                 // step 3: init-method
-                if (beanDefinition.getInitMethodName() != null && !beanDefinition.equals("")) {
+                if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().equals("")) {
                     invokeInitMethod(beanDefinition, singleton);
                 }
 
@@ -98,7 +101,7 @@ public abstract class AbstractBeanFactory
     }
 
     private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {
-        Class clz = null;
+        Class<?> clz;
         try {
             clz = Class.forName(beanDefinition.getClassName());
         } catch (ClassNotFoundException e) {
@@ -156,7 +159,7 @@ public abstract class AbstractBeanFactory
                             paramValues[i] = Integer.valueOf((String) argumentValue.getValue());
                         } else if ("int".equals(argumentValue.getType())) {
                             paramTypes[i] = int.class;
-                            paramValues[i] = Integer.valueOf((String) argumentValue.getValue()).intValue();
+                            paramValues[i] = Integer.valueOf((String) argumentValue.getValue());
                         } else {
                             paramTypes[i] = String.class;
                             paramValues[i] = argumentValue.getValue();
@@ -183,13 +186,17 @@ public abstract class AbstractBeanFactory
                     e.printStackTrace();
                 }
             } else {
-                obj = clz.newInstance();
+                obj = clz.getDeclaredConstructor().newInstance();
             }
 
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
+        } catch (InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
-        System.out.println(bd.getId() + " bean created. " + bd.getClassName() + " : " + obj.toString());
+        if(null != obj){
+            System.out.println(bd.getId() + " bean created. " + bd.getClassName() + " : " + obj);
+        }
         return obj;
     }
 
@@ -218,7 +225,7 @@ public abstract class AbstractBeanFactory
                         paramValues[0] = Integer.valueOf((String) pValue);
                     } else if ("int".equals(pType)) {
                         paramTypes[0] = int.class;
-                        paramValues[0] = Integer.valueOf((String) pValue).intValue();
+                        paramValues[0] = Integer.valueOf((String) pValue);
                     } else {
                         paramTypes[0] = String.class;
                         paramValues[0] = pValue;

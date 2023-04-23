@@ -33,8 +33,15 @@ note and practice
 - 模式匹配（类型匹配）
 - switch表达式
 - 异常处理
+- Flow异步编程
+- 矢量运算
+- 外部内存接口
+- 外部函数接口
+- 空指针异常处理
+- 模块化
 ### miniSpring
 
 - IoC
 - SpringMVC
 - jdbcTemplate
+- AOP

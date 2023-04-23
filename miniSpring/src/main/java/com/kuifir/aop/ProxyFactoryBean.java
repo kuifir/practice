@@ -1,9 +1,13 @@
 package com.kuifir.aop;
 
+import com.kuifir.aop.advice.*;
+import com.kuifir.beans.BeansException;
+import com.kuifir.beans.factory.BeanFactory;
+import com.kuifir.beans.factory.BeanFactoryAware;
 import com.kuifir.beans.factory.FactoryBean;
 import com.kuifir.util.ClassUtils;
 
-public class ProxyFactoryBean<T> implements FactoryBean<T> {
+public class ProxyFactoryBean<T> implements FactoryBean<T>, BeanFactoryAware {
     private AopProxyFactory<T> aopProxyFactory;
     private String[] interceptorNames;
     private String targetName;
@@ -11,16 +15,44 @@ public class ProxyFactoryBean<T> implements FactoryBean<T> {
     private final ClassLoader proxyClassLoader = ClassUtils.getDefaultClassLoader();
     private T singletonInstance;
 
+    private BeanFactory beanFactory;
+    private String interceptorName;
+    private Advisor advisor;
+
+    private synchronized void initializeAdvisor() {
+        Object advice = null;
+        MethodInterceptor mi = null;
+        try {
+            advice = this.beanFactory.getBean(this.interceptorName);
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
+        if (advice instanceof BeforeAdvice) {
+            mi = new MethodBeforeAdviceInterceptor((MethodBeforeAdvice) advice);
+        } else if (advice instanceof AfterAdvice) {
+            mi = new AfterReturningAdviceInterceptor((AfterReturningAdvice) advice);
+        } else if (advice instanceof MethodInterceptor) {
+            mi = (MethodInterceptor) advice;
+        }
+        advisor = new DefaultAdvisor();
+        advisor.setMethodInterceptor(mi);
+    }
+
     public ProxyFactoryBean() {
         this.aopProxyFactory = new DefaultAopProxyFactory<>();
     }
 
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
     protected AopProxy<T> createAopProxy() {
-        return getAopProxyFactory().createAopProxy(target);
+        return getAopProxyFactory().createAopProxy(target, this.advisor);
     }
 
     @Override
     public T getObject() throws Exception {
+        initializeAdvisor();
         // 获取内部对象
         return getSingletonInstance();
     }
@@ -63,5 +95,17 @@ public class ProxyFactoryBean<T> implements FactoryBean<T> {
 
     public void setTarget(T target) {
         this.target = target;
+    }
+
+    public String getTargetName() {
+        return targetName;
+    }
+
+    public String getInterceptorName() {
+        return interceptorName;
+    }
+
+    public void setInterceptorName(String interceptorName) {
+        this.interceptorName = interceptorName;
     }
 }

@@ -75,5 +75,11 @@
 
     <bean id="action" class="com.kuifir.aop.ProxyFactoryBean">
         <property type="java.lang.Object" name="target" ref="realaction"/>
+        <property type="String" name="interceptorName" value="myAfterAdvice"/>
     </bean>
+
+
+    <bean id="myInterceptor" class="com.kuifir.test.service.TracingInterceptor" />
+    <bean id="myBeforeAdvice" class="com.kuifir.test.service.MyBeforeAdvice" />
+    <bean id="myAfterAdvice" class="com.kuifir.test.service.MyAfterAdvice" />
 </beans>
