@@ -71,7 +71,7 @@ public class DefaultListableBeanFactory
     @Override
     public Object getBean(String beanName) throws BeansException{
         Object result = super.getBean(beanName);
-        if (result == null) {
+        if (result == null && null!= this.parentBeanFactory) {
             result = this.parentBeanFactory.getBean(beanName);
         }
         return result;

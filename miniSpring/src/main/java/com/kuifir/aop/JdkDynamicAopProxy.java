@@ -6,9 +6,9 @@ import java.lang.reflect.Proxy;
 
 public class JdkDynamicAopProxy<T> implements AopProxy<T>, InvocationHandler {
     private final T target;
-    private final Advisor advisor;
+    private final PointcutAdvisor advisor;
 
-    public JdkDynamicAopProxy(T target, Advisor advisor) {
+    public JdkDynamicAopProxy(T target, PointcutAdvisor advisor) {
         this.target = target;
         this.advisor = advisor;
     }
@@ -21,9 +21,9 @@ public class JdkDynamicAopProxy<T> implements AopProxy<T>, InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (method.getName().equals("doAction")) {
+        Class<?> targetClass = (target != null ? target.getClass() : null);
+        if ((this.advisor.getPointcut().getMethodMatcher().matches(method, targetClass))) {
 //            System.out.println("-----before call real object, dynamic proxy........");
-            Class<?> targetClass = (target != null ? target.getClass() : null);
             MethodInterceptor interceptor = this.advisor.getMethodInterceptor();
             MethodInvocation invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass);
             return interceptor.invoke(invocation);

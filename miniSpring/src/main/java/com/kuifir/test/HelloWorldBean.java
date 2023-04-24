@@ -103,4 +103,15 @@ public class HelloWorldBean {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping("/testaop3")
+    public void doTestJDKDynamicAop2(HttpServletRequest request, HttpServletResponse response) {
+        action.doSomething();
+        String str = "test aop, hello world!";
+        try {
+            response.getWriter().write(str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

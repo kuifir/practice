@@ -7,4 +7,9 @@ public class Action1 implements IAction {
     public void doAction() {
         System.out.println("really do action");
     }
+
+    @Override
+    public void doSomething() {
+        System.out.println("really do something");
+    }
 }
