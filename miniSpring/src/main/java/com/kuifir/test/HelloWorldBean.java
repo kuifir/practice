@@ -30,6 +30,10 @@ public class HelloWorldBean {
     private SqlSessionFactory sqlSessionFactory;
     @Autowired
     private IAction action;
+    @Autowired
+    private IAction action1;
+    @Autowired
+    private IAction action2;
 
     @RequestMapping("/test")
     @ResponseBody
@@ -107,6 +111,17 @@ public class HelloWorldBean {
     @RequestMapping("/testaop3")
     public void doTestJDKDynamicAop2(HttpServletRequest request, HttpServletResponse response) {
         action.doSomething();
+        String str = "test aop, hello world!";
+        try {
+            response.getWriter().write(str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @RequestMapping("/testaop4")
+    public void doTestJDKDynamicAutoProxy(HttpServletRequest request, HttpServletResponse response) {
+        action1.doAction();
+        action2.doSomething();
         String str = "test aop, hello world!";
         try {
             response.getWriter().write(str);

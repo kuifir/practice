@@ -64,7 +64,7 @@ public abstract class AbstractBeanFactory
                 }
                 // 进行beanpostprocessor处理
                 // step 1: postProcessBeforeInitialization
-                applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+                singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
 
                 // step 2: afterPropertiesSet
 
@@ -74,18 +74,18 @@ public abstract class AbstractBeanFactory
                 }
 
                 // step 4: postProcessAfterInitialization
-                applyBeanPostProcessorsAfterInitialization(singleton, beanName);
+                singleton = applyBeanPostProcessorsAfterInitialization(singleton, beanName);
+                this.removeSingleton(beanName);
+                this.registerBean(beanName, singleton);
             }
-        }
-        else {
+        } else {
 //            System.out.println("bean exist -------------- " + beanName + "----------------"+singleton);
         }
         //process Factory Bean
         if (singleton instanceof FactoryBean) {
 //            System.out.println("factory bean -------------- " + beanName + "----------------"+singleton);
             return this.getObjectForBeanInstance(singleton, beanName);
-        }
-        else {
+        } else {
 //            System.out.println("normal bean -------------- " + beanName + "----------------"+singleton);
         }
         return singleton;
@@ -194,7 +194,7 @@ public abstract class AbstractBeanFactory
         } catch (InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        if(null != obj){
+        if (null != obj) {
             System.out.println(bd.getId() + " bean created. " + bd.getClassName() + " : " + obj);
         }
         return obj;

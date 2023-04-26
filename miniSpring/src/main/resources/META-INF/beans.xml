@@ -45,12 +45,12 @@
         <property type="String" name="suffix" value=".jsp"/>
     </bean>
 
-<!--    <bean id="dataSource" class="com.kuifir.jdbc.datasource.SingleConnectionDataSource">-->
-<!--        <property type="String" name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>-->
-<!--        <property type="String" name="url" value="jdbc:mysql://localhost:3306/mybatis"/>-->
-<!--        <property type="String" name="username" value="root"/>-->
-<!--        <property type="String" name="password" value="123456"/>-->
-<!--    </bean>-->
+    <!--    <bean id="dataSource" class="com.kuifir.jdbc.datasource.SingleConnectionDataSource">-->
+    <!--        <property type="String" name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>-->
+    <!--        <property type="String" name="url" value="jdbc:mysql://localhost:3306/mybatis"/>-->
+    <!--        <property type="String" name="username" value="root"/>-->
+    <!--        <property type="String" name="password" value="123456"/>-->
+    <!--    </bean>-->
 
     <!--jdbcTemplate-->
     <bean id="dataSource" class="com.kuifir.jdbc.pool.PooledDataSource">
@@ -69,9 +69,12 @@
     </bean>
 
     <!--aop-->
-<!--    <bean id="action" class="com.kuifir.test.service.impl.Action1"/>-->
+    <!--    <bean id="action" class="com.kuifir.test.service.impl.Action1"/>-->
 
     <bean id="realaction" class="com.kuifir.test.service.impl.Action1"/>
+
+    <bean id="action1" class="com.kuifir.test.service.impl.Action1"/>
+    <bean id="action2" class="com.kuifir.test.service.impl.Action2"/>
 
     <bean id="action" class="com.kuifir.aop.ProxyFactoryBean">
         <property type="java.lang.Object" name="target" ref="realaction"/>
@@ -79,13 +82,19 @@
     </bean>
 
 
-    <bean id="myInterceptor" class="com.kuifir.test.service.TracingInterceptor" />
-    <bean id="myBeforeAdvice" class="com.kuifir.test.service.MyBeforeAdvice" />
-    <bean id="myAfterAdvice" class="com.kuifir.test.service.MyAfterAdvice" />
+    <bean id="myInterceptor" class="com.kuifir.test.service.TracingInterceptor"/>
+    <bean id="myBeforeAdvice" class="com.kuifir.test.service.MyBeforeAdvice"/>
+    <bean id="myAfterAdvice" class="com.kuifir.test.service.MyAfterAdvice"/>
 
 
     <bean id="advisor" class="com.kuifir.aop.NameMatchMethodPointcutAdvisor">
         <property type="com.kuifir.aop.Advice" name="advice" ref="myBeforeAdvice"/>
         <property type="String" name="mappedName" value="do*"/>
+    </bean>
+
+
+    <bean id="autoProxyCreator" class="com.kuifir.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property type="String" name="pattern" value="action*"/>
+        <property type="String" name="interceptorName" value="advisor"/>
     </bean>
 </beans>

@@ -24,6 +24,9 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
         Object object = null;
         try {
             object = factory.getObject();
+            if(object instanceof FactoryBean<?> factoryBean){
+                object = doGetObjectFromFactoryBean(factoryBean, beanName);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
