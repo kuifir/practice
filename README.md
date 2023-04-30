@@ -12,6 +12,12 @@ note and practice
   - readWriteLock
   - semaphore
   - stampedLock
+  - CountDownLatch
+  - CyclicBarrier
+  - Executor与线程池
+  - Future
+  - CompletableFuture
+  - CompletionService
 
 ### 设计模式
 
