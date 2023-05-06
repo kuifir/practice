@@ -1,4 +1,4 @@
-package com.kuifir.normal.innerClass;
+package com.kuifir.normal.innerClass.Parcel;
 
 /**
  * 更普遍的情况是，外部类有一个方法，该方法返回一个只想内部类的引用，

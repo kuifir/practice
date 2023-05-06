@@ -1,5 +1,8 @@
-package com.kuifir.normal.innerClass;
+package com.kuifir.normal.innerClass.Parcel;
 
+/**
+ * @author kuifir
+ */
 public class Parcel1 {
     public static void main(String[] args) {
         Parcel1 p = new Parcel1();
