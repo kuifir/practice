@@ -1,6 +1,10 @@
 module jpms.crypto {
-    requires jmh.core;
+   /**
+    * 运行子模块时候需要注释掉
+    */
     requires org.junit.jupiter.api;
+
+    requires jmh.core;
     requires java.logging;
     exports com.kuifir.jpms.crypto;
 
