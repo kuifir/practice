@@ -1,7 +1,9 @@
-package com.kuifir.normal.funtional;
+package com.kuifir.normal.funtional.recursion;
 
 /**
+ * 递归的lambda表达式：赋值实例变量
  * 用一个递归的lambda表达式来实现斐波那契函数，使用的实例变量，用构造器来初始化
+ * @see IntCall
  * @author kuifir
  * @date 2023/5/10 23:45
  */
