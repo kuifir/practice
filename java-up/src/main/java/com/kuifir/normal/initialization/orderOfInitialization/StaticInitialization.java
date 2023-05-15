@@ -11,8 +11,8 @@ package com.kuifir.normal.initialization.orderOfInitialization;
  *
  * @author kuifir
  * @date 2023/5/14 13:34
- * @see OrderOfInitialization
  * @see StaticInitialization
+ * @see OrderOfInitialization
  */
 class Bowl {
     Bowl(int marker) {
@@ -78,7 +78,7 @@ class Cupboard {
  * 3. 当使用new Dog()创建对象时,构建过程首先会在堆上为Dog对象分配足够的存储空间,
  * 4. 这块存储空间会被清空,然后自动将该Dog对象中的所有基本类型设置为其默认值(数值类型默认值时0.boolean和char则是和0等价的对应值),而引用会被设置为null.
  * 5. 执行所有出现字段定义出的初始化操作.
- * 6. 执行构造器.这实际上可能设计相当多的动作,尤其是在涉及继承时.
+ * 6. 执行构造器.这实际上可能设计相当多的动作,尤其是在涉及继承时.{@link com.kuifir.normal.polymorphism.Sandwich}
  * @author kuifir
  * @see Bowl
  * @see OrderOfInitialization

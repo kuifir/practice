@@ -10,16 +10,13 @@ package com.kuifir.normal.initialization.orderOfInitialization;
  * 静态子句的显示静态初始化{@link ExplicitStatic}
  * 非静态实例初始化{@link Mugs}
  * 子类的初始化{@link com.kuifir.normal.initialization.Cartoon}
+ * 构造器调用顺序(有多态){@link com.kuifir.normal.polymorphism.Sandwich}
  * <p></p>
- * 为了总结对象创建的过程,假设有一个名为Dog的类.
- * 1. 尽管没有显示使用static关键字,但构造器实际上也是静态方法.
- * 因此,第一次创建类型为Dog的对象时,或者第一次访问类Dog的静态方法或静态字段时,Java解释器会搜索类路径来定位Dog.class文件.
- * 2. 当Dog.class被加载后(这将创建一个Class对象),它的所有静态初始化工作都会执行.因此,静态初始化只在Class对象首次加载时发生一次.
- * 3. 当使用new Dog()创建对象时,构建过程首先会在堆上为Dog对象分配足够的存储空间,
- * 4. 这块存储空间会被清空,然后自动将该Dog对象中的所有基本类型设置为其默认值(数值类型默认值时0.boolean和char则是和0等价的对应值),而引用会被设置为null.
- * 5. 执行所有出现字段定义出的初始化操作.
- * 6. 执行构造器.这实际上可能设计相当多的动作,尤其是在涉及继承时.
+ * 总结:
+ * 对象创建的过程: {@link StaticInitialization}
+ * 构造器调用顺序: {@link com.kuifir.normal.polymorphism.Sandwich}
  * @see Beetle
+ * @see com.kuifir.normal.polymorphism.Sandwich
  * @see OrderOfInitialization
  * @see StaticInitialization
  * @see ExplicitStatic
