@@ -4,6 +4,7 @@ package com.kuifir.normal.initialization.orderOfInitialization;
  * 初始化顺序：
  * 类中的变量定义顺序决定了初始化的顺序。
  * 即使分散到方法定义之间，变量定义仍然会在任何方法（包括构造器）调用之前就被初始化。
+ * 类初始化{@link com.kuifir.normal.reflection.ClassInitialization}
  * 初始化全过程{@link Beetle}
  * 演示初始化顺序{@link OrderOfInitialization}
  * 静态初始化{@link StaticInitialization}
@@ -15,6 +16,7 @@ package com.kuifir.normal.initialization.orderOfInitialization;
  * 总结:
  * 对象创建的过程: {@link StaticInitialization}
  * 构造器调用顺序: {@link com.kuifir.normal.polymorphism.Sandwich}
+ * @see com.kuifir.normal.reflection.ClassInitialization
  * @see Beetle
  * @see com.kuifir.normal.polymorphism.Sandwich
  * @see OrderOfInitialization
