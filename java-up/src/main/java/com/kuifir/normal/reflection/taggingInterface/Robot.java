@@ -3,13 +3,15 @@ package com.kuifir.normal.reflection.taggingInterface;
 import java.util.List;
 
 /**
- * 如果你使用的是接口而不是具体类，那么就可以使用DynamicProxy来自动生成{@link Null}。
+ * 如果你使用的是接口而不是具体类，那么就可以使用DynamicProxy来自动生成{@link Null}。{@link NullRobot}
  * 假设有个Robot接口，它定义了名称、模型以及一个描述了自身功能的{@code List<Operation>}
- * 扫雪机器人 {@link SnowRobot}
  *
+ * 空Robot {@link NullRobot}
+ * 扫雪机器人 {@link SnowRobot}
  * @author kuifir
  * @date 2023/5/19 23:23
  * @see Null
+ * @see NullRobot
  */
 public interface Robot {
     /**
