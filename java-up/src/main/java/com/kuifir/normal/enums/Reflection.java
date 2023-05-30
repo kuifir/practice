@@ -27,7 +27,15 @@ import java.util.TreeSet;
  * <p><p/>
  * 打印结果显示Explore枚举被编译器限定为final类，所以你无法继承一个枚举类。
  * 此外还有一个static的初始化自子句，可以被重定义{@link }
+ * <p></p>
+ * 由于类型擦除的缘故，反编译器得不到Enum类的完成信息，
+ * 因此只能将Explore类的基类作为一个原始的Enum来显示，而不是实际上的{@code Enum<Explore>}
+ * <p></p>
+ * 由于values()方法是由编译器在枚举类的定义中插入的一个静态方法，因此如果你将枚举类型向上转型为Enum,则values()方法将不可用。
+ * 然而要注意的是，Class中有个getEnumConstants()方法，
+ * 所以即使Enum的接口中没有values()方法，仍可以通过Class对象来的带enum的实例{@link UpcastEnum}
  *
+ * @see UpcastEnum
  * @author kuifir
  * @date 2023/5/30 23:09
  */
