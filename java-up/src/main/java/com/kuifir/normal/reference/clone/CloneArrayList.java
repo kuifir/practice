@@ -13,8 +13,9 @@ import java.util.stream.IntStream;
  * 原有的ArrayList和克隆的ArrayList都是同一个对象的不同引用名.
  * 这是一种<b>浅拷贝</b>(shallow copy),因为之复制了对象的"表层部分"。
  * 实际对象的组成部分包括该"表层（引用）"、该引用指向的所有对象，以及所有<b>这些</b>对象所指向的所有对象，以此类推。
- * 这通常称为"对象网络"。创建所有这些内容的完整副本，称为<b>深拷贝</b>
+ * 这通常称为"对象网络"。创建所有这些内容的完整副本，称为<b>深拷贝</b>{@link com.kuifir.normal.reference.clone.deepCopy.AddingClone}
  *
+ * @see com.kuifir.normal.reference.clone.deepCopy.AddingClone
  * @author kuifir
  * @date 2023/6/4 22:36
  */

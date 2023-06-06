@@ -6,6 +6,7 @@ module jpms.crypto {
 
     requires jmh.core;
     requires java.logging;
+    requires cn.hutool;
     exports com.kuifir.jpms.crypto;
 
     uses com.kuifir.jpms.crypto.DigestManager;
