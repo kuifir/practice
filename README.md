@@ -62,7 +62,9 @@ note and practice
   - exception
   - generic
   - reflection
+  - reference
   - enum
+  - collection
 ### miniSpring
 
 - IoC

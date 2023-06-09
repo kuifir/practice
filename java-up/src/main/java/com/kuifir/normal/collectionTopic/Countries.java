@@ -133,20 +133,26 @@ public class Countries {
             }
         };
     }
-    static Map<String,String>map = new FlyweightMap();
-    public static Map<String,String> capitals(){
+
+    static Map<String, String> map = new FlyweightMap();
+
+    public static Map<String, String> capitals() {
         // 整个映射
         return map;
     }
-    public static Map<String,String> capitals(int size){
+
+    public static Map<String, String> capitals(int size) {
         // 部分映射
         return select(size);
     }
+
     static List<String> names = new ArrayList<>(map.keySet());
-    public static List<String> names(){
+
+    public static List<String> names() {
         return names;
     }
-    public static List<String> names(int size){
+
+    public static List<String> names(int size) {
         // 部分列表
         return new ArrayList<>(select(size).keySet());
     }
