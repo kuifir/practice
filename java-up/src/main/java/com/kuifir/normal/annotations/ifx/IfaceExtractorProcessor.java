@@ -62,6 +62,8 @@ public class IfaceExtractorProcessor extends AbstractProcessor {
 
     private void writeInterfaceFile(String interfaceName) {
         String packageName = elementUtils.getPackageOf(interfaceMethods.get(0)).toString();
+        System.out.println(packageName);
+        System.out.println(interfaceName);
         try (
                 // Filer（processingEnv.getFiler()）是一种创建新文件的PrintWriter
                 // 之所以用Filer对象而非某个普通的PrintWriter,
