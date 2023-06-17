@@ -19,6 +19,7 @@ note and practice
   - CompletableFuture
   - CompletionService
   - Fork/Join
+  - disruptor
 - 案例
   - 限流器：限流算法有两个，一个是令牌桶算法（Token Bucket），另一个是漏桶算法（Leaky Bucket）
   - 基于 MVCC 的软件事务内存（Software Transactional Memory，简称 STM）
@@ -65,6 +66,7 @@ note and practice
   - reference
   - enum
   - collection
+  - annotation
 ### miniSpring
 
 - IoC
