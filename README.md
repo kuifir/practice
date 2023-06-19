@@ -27,13 +27,13 @@ note and practice
   - actor
 
 ### 设计模式
-
 - 单例模式
 - 上下文模式
 - 装饰器模式
 - future模式
 - 生产者消费者模式
 - Worker Thread 设计模式
+- 命令行模式
 
 ### git 
 
