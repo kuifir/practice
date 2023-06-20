@@ -2,8 +2,6 @@ package com.kuifir.juc.future;
 
 import java.util.concurrent.*;
 
-import static java.lang.Thread.sleep;
-
 /**
  * 用两个线程 T1 和 T2 来完成烧水泡茶程序，
  * T1 负责洗水壶、烧开水、泡茶这三道工序，T2 负责洗茶壶、洗茶杯、拿茶叶三道工序，

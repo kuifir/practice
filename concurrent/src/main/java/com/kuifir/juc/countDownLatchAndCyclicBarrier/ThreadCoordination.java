@@ -1,6 +1,9 @@
 package com.kuifir.juc.countDownLatchAndCyclicBarrier;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.Vector;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 

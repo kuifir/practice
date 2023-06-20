@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * 直观地看，2 个请求 / 秒指的是每秒最多允许 2 个请求通过限流器，
  * 其实在 Guava 中，流速还有更深一层的意思：是一种匀速的概念，2 个请求 / 秒等价于 1 个请求 /500 毫秒。
  * 在向线程池提交任务之前，调用 acquire() 方法就能起到限流的作用。通过示例代码的执行结果，任务提交到线程池的时间间隔基本上稳定在 500 毫秒。
- *<p></p>
+ * <p></p>
  * Guava 的限流器使用上还是很简单的，那它是如何实现的呢？
  * Guava 采用的是令牌桶算法{@link TokenBucket}，其核心是要想通过限流器，必须拿到令牌。
  * 也就是说，只要我们能够限制发放令牌的速率，那么就能控制流速了
@@ -22,9 +22,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * 令牌桶算法是定时向令牌桶发送令牌，请求能够从令牌桶中拿到令牌，然后才能通过限流器；
  * 而漏桶算法里，请求就像水一样注入漏桶，漏桶会按照一定的速率自动将水漏掉，只有漏桶里还能注入水的时候，请求才能通过限流器。
  * 令牌桶算法和漏桶算法很像一个硬币的正反面，所以你可以参考令牌桶算法的实现来实现漏桶算法。
- * @see RateLimiter
+ *
  * @author kuifir
  * @date 2023/5/21 14:26
+ * @see RateLimiter
  */
 public class RateLimiterUseCase {
     public static void main(String[] args) {

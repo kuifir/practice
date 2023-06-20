@@ -38,7 +38,7 @@ public class ThreadPoolExecutorDemo {
                 new ThreadPoolExecutor.AbortPolicy()
         );
         for (int i = 0; i < 1000; i++) {
-            threadPoolExecutor.execute(()-> {
+            threadPoolExecutor.execute(() -> {
                 System.out.println(integer.getAndIncrement());
                 System.out.println(Thread.currentThread().getName());
             });

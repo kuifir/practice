@@ -9,9 +9,9 @@ import java.util.List;
  * 破坏占用且等待条件
  * 从理论上讲，要破坏这个条件，可以一次性申请所有资源
  * <p>
- *
+ * <p>
  * 用“等待-通知”机制优化循环等待{@link com.kuifir.deadLock.solve.DestroyPossessionAndWait}
- * 
+ *
  * @see DestroyPossessionAndWait
  * @see DeadLockProblem
  */

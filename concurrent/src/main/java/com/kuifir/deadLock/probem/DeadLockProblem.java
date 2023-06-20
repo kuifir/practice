@@ -42,9 +42,9 @@ public class DeadLockProblem {
                     throw new RuntimeException(e);
                 }
                 // 锁定转入账户
-                System.out.format("%s : 准备获取{%s}的锁%n", Thread.currentThread().getName(),target);
+                System.out.format("%s : 准备获取{%s}的锁%n", Thread.currentThread().getName(), target);
                 synchronized (target) {
-                    System.out.format("%s　:　获取{%s}的锁%n", Thread.currentThread().getName(),target);
+                    System.out.format("%s　:　获取{%s}的锁%n", Thread.currentThread().getName(), target);
                     if (this.balance > amt) {
                         this.balance -= amt;
                         target.balance += amt;

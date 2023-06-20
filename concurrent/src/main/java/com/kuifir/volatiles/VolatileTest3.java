@@ -16,6 +16,7 @@ package com.kuifir.volatiles;
  * }</pre>
  * 虽然我们的 COUNTER 变量，仍然没有设置 volatile 这个关键字，但是我们的 ChangeListener 似乎“睡醒了”。
  * 在通过 Thread.sleep(5) 在每个循环里“睡上“5 毫秒之后，ChangeListener 又能够正常取到 COUNTER 的值了。
+ *
  * @author kuifir
  * @date 2023/6/5 22:06
  * @see VolatileTest2

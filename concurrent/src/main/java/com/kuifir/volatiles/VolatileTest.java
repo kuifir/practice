@@ -29,7 +29,7 @@ package com.kuifir.volatiles;
  *          private volatile int atomicInt = 0;
  *          amoticInt++;}
  *          </pre>
- *<p></p>
+ * <p></p>
  * 本例结果：
  * <pre>{@code
  * Incrementing COUNTER to : 1
@@ -43,9 +43,10 @@ package com.kuifir.volatiles;
  * Incrementing COUNTER to : 5
  * Got Change for COUNTER: 5}</pre>
  * 如果去掉关键字volatile {@link VolatileTest2}
- * @see VolatileTest2
+ *
  * @author kuifir
  * @date 2023/6/5 22:06
+ * @see VolatileTest2
  */
 public class VolatileTest {
     private static volatile int COUNTER = 0;

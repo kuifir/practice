@@ -31,7 +31,8 @@ class CachedData {
                 rwl.writeLock().unlock();
                 // Unlock write, still hold read
             }
-        } try {
+        }
+        try {
             // 此处仍然有读锁
 //            use(data);
         } finally {

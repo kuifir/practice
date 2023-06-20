@@ -2,8 +2,6 @@ package com.kuifir.rateLimiter;
 
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.Math.max;
-
 /**
  * 令牌桶算法（Token Bucket）
  * 令牌桶算法的详细描述如下：

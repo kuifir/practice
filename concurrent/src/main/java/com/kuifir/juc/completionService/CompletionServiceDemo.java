@@ -18,6 +18,7 @@ public class CompletionServiceDemo {
     /**
      * 利用 CompletionService 实现 Dubbo 中的 Forking Cluster
      * 支持并行地调用多个查询服务，只要有一个成功返回结果，整个服务就可以返回
+     *
      * @return
      */
     public static Integer useDemo() {

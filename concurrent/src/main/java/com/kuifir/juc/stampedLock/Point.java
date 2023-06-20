@@ -47,7 +47,8 @@ class Point {
     void moveIfAtOrigin(double newX, double newY) {
         long stamp = sl.tryOptimisticRead();
         try {
-            retryHoldingLock: for (;; stamp = sl.writeLock()) {
+            retryHoldingLock:
+            for (; ; stamp = sl.writeLock()) {
                 if (stamp == 0L)
                     continue retryHoldingLock;
                 // possibly racy reads
@@ -70,6 +71,7 @@ class Point {
                 sl.unlockWrite(stamp);
         }
     }
+
     // upgrade read lock to write lock
     void moveIfAtOrigin2(double newX, double newY) {
         long stamp = sl.readLock();
@@ -81,8 +83,7 @@ class Point {
                     x = newX;
                     y = newY;
                     break;
-                }
-                else {
+                } else {
                     sl.unlockRead(stamp);
                     stamp = sl.writeLock();
                 }

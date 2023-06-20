@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 
 /**
  * 鉴于可以使用方法引用而不是匿名 lambda，可以用这种方式重写示例：
+ *
  * @author kuifir
  * @date 2023/6/12 20:24
  */

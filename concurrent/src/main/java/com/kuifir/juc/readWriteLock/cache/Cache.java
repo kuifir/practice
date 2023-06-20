@@ -27,17 +27,17 @@ public class Cache<K, V> {
         try {
             value = map.get(key);
             // 锁升级 （ReadWriteLock不支持,会无限等待（读锁还未释放，写锁一直等待））
-            if(value == null){
+            if (value == null) {
                 writeLock.lock();
                 try {
                     //再次验证并更新缓存
                     value = map.get(key);
-                    if(value == null){
+                    if (value == null) {
                         //查询数据库
                         value = supplier.get();
                         map.put(key, value);
                     }
-                }finally {
+                } finally {
                     writeLock.unlock();
                 }
             }
@@ -45,7 +45,7 @@ public class Cache<K, V> {
             readLock.unlock();
         }
         // 缓存中存在，返回
-        if(value != null){
+        if (value != null) {
             return value;
         }
         // 缓存中不存在，获取数据，放入缓存
@@ -54,7 +54,7 @@ public class Cache<K, V> {
             // 再次验证
             // 其他线程可能已经查询过数据库
             value = map.get(key);
-            if(value == null){
+            if (value == null) {
                 //查询数据库
                 // value=省略代码无数
                 value = supplier.get();
@@ -77,7 +77,7 @@ public class Cache<K, V> {
     }
 
     public static void main(String[] args) {
-        Cache<Integer,Integer> cache = new Cache<>(new Random()::nextInt);
+        Cache<Integer, Integer> cache = new Cache<>(new Random()::nextInt);
         System.out.println(cache.get(1));
     }
 }

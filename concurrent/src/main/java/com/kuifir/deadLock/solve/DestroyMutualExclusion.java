@@ -99,7 +99,7 @@ public class DestroyMutualExclusion {
             // 一次性申请转出账户和转入账户，直到成功
             SplittableRandom random = new SplittableRandom();
             while (true) {
-                    // 不加随机时间会活锁
+                // 不加随机时间会活锁
                 if (this.lock.tryLock(random.nextLong(1000), TimeUnit.MILLISECONDS)) {
                     System.out.format("%s ：获取{%s}的锁%n", Thread.currentThread().getName(), this);
                     try {

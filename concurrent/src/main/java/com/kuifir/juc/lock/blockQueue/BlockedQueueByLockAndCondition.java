@@ -11,18 +11,18 @@ import java.util.stream.IntStream;
 public class BlockedQueueByLockAndCondition<T> {
     public static void main(String[] args) {
         BlockedQueueByLockAndCondition<Integer> blockedQueueByLockAndCondition = new BlockedQueueByLockAndCondition();
-        new Thread(()->{
-            IntStream.range(1,100).forEach(i ->{
-                new Thread(()->{
-                    System.out.println(i +"入队");
+        new Thread(() -> {
+            IntStream.range(1, 100).forEach(i -> {
+                new Thread(() -> {
+                    System.out.println(i + "入队");
                     blockedQueueByLockAndCondition.enq(i);
                 }).start();
             });
 
         }).start();
-        new Thread(()->{
-            IntStream.range(1,100).forEach(i ->{
-                new Thread(()->{
+        new Thread(() -> {
+            IntStream.range(1, 100).forEach(i -> {
+                new Thread(() -> {
                     Integer deq = blockedQueueByLockAndCondition.deq();
                     System.out.println(deq + "出队");
                 }).start();
@@ -30,6 +30,7 @@ public class BlockedQueueByLockAndCondition<T> {
 
         }).start();
     }
+
     private final LinkedList<T> queue = new LinkedList<>(new ArrayList<>(10));
     final Lock lock =
             new ReentrantLock();
@@ -44,7 +45,7 @@ public class BlockedQueueByLockAndCondition<T> {
     void enq(T x) {
         lock.lock();
         try {
-            while (queue.size() ==10) {
+            while (queue.size() == 10) {
                 // 等待队列不满
                 notFull.await();
             }
