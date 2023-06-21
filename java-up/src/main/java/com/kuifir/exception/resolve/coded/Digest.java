@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 public sealed abstract class Digest permits Digest.SHA256, Digest.SHA512 {
     private static Digest.SHA256 sha256 = new Digest.SHA256();
     private static Digest.SHA512 sha512 = new Digest.SHA512();
+
     abstract byte[] digest(byte[] message);
 
     /**

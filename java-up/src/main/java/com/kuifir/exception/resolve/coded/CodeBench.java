@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 使用了错误码之后，抛出异常与正常运行性能相近
- *
  */
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.SECONDS)

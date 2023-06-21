@@ -1,7 +1,5 @@
 package com.kuifir.jpms.problem.crypto;
 
-import com.kuifir.jpms.problem.impl.DigestManagerImpl;
-
 import java.util.ServiceLoader;
 
 public interface Digest {
