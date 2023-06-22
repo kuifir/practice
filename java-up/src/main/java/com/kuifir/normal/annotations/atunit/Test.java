@@ -1,4 +1,4 @@
-package com.kuifir.normal.annotations.basicGrammar;
+package com.kuifir.normal.annotations.atunit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
