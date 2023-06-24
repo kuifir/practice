@@ -1,4 +1,4 @@
-package com.kuifir.parallelStream;
+package com.kuifir.basic.parallelStream;
 
 import java.io.IOException;
 import java.nio.file.Files;

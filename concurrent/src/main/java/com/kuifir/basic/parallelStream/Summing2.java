@@ -1,4 +1,4 @@
-package com.kuifir.parallelStream;
+package com.kuifir.basic.parallelStream;
 
 import java.util.Arrays;
 
