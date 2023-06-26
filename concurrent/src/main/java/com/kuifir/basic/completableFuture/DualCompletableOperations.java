@@ -58,7 +58,7 @@ public class DualCompletableOperations {
         join();
 
         init();
-        voidr(cfA.thenCombineAsync(cfB, (w1, w2) -> {
+        showr(cfA.thenCombineAsync(cfB, (w1, w2) -> {
             System.out.println("thenComposeAsync: " + w1 + "," + w2);
             return w1;
         }));
