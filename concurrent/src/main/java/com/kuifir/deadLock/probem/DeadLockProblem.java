@@ -9,6 +9,8 @@ package com.kuifir.deadLock.probem;
  * 4.循环等待，线程 T1 等待线程 T2 占有的资源，线程 T2 等待线程 T1 占有的资源，就是循环等待。
  * <p>
  * 其中，互斥这个条件我们没有办法破坏，因为我们用锁为的就是互斥。不过其他三个条件都是有办法破坏掉的
+ *
+ * @author kuifir
  */
 public class DeadLockProblem {
 
