@@ -1,4 +1,4 @@
-package com.kuifir.basic.exceptionsCatch;
+package com.kuifir.basic.exceptionsCaught;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
