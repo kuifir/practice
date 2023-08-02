@@ -7,7 +7,7 @@
 - 命令模式（Command-mode）: 也叫末行模式，进行文本保存退出。
 - 可视模式（Visual-mode）:高级编辑模式对一块文件进行插入操作
 
-### 正常模式
+#### 正常模式
 
 - i 进入插入模式, 在光标当前位置进入
 - I 进入插入模式，光标为所在行的开头
@@ -37,11 +37,11 @@
 - ^ 光标移动到行首
 - $ 光标移动到行尾
 
-### 插入模式
+#### 插入模式
 
 
 
-### 命令模式
+#### 命令模式
 
 - 正常模式`:`进入命令模式
 
@@ -63,7 +63,7 @@
 - 3,5 s/old/new/ 在第三到第五行之间进行替换
 - 
 
-### 可视模式
+#### 可视模式
 
 - 正常模式`v`进入字符可视模式
 
@@ -72,3 +72,80 @@
 - 正常模式`ctrl +　v`进入可视块模式。 例：`ctrl +　v`进入可视块模式，选中块，
 
   插入字符，`I`，添加字符，连按两下`esc`,则选中块每一行后悔插入相同内容。
+
+### 配置
+
+#### 基本配置
+
+```shell
+set enc=utf-8
+set nocompatible
+source $VIMRUNTIME/vimrc_example.vim
+```
+
+####  备份和撤销文件 
+
+ 通常做法是，不产生备份文件，但保留跨会话撤销编辑的能力 
+
+- Linux/macOS 
+
+  ```shell
+  set nobackup
+  set undodir=~/.vim/undodir
+  
+  if !isdirectory(&undodir)
+    call mkdir(&undodir, 'p', 0700)
+  endif
+  ```
+
+- Windows
+
+  ```shell
+  set nobackup
+  set undodir=~\vimfiles\undodir
+
+  if !isdirectory(&undodir)
+    call mkdir(&undodir, 'p', 0700)
+  endif
+  ```
+  
+
+####  鼠标支持 
+
+```shell
+if has('mouse')
+  if has('gui_running') || (&term =~ 'xterm' && !has('mac'))
+    set mouse=a
+  else
+    set mouse=nvi
+  endif
+endif
+```
+
+####  中文支持 
+
+如果你明确需要处理中文，那在配置文件里最好明确写下下面的选项设定： 
+
+```shell
+set fileencodings=ucs-bom,utf-8,gb18030,latin1
+```
+
+####  图形界面的字体配置 
+
+- Linux
+
+  ```shell
+  " Linux 和 Windows 不同，不能用 '_' 取代空格
+  set guifont=DejaVu\ Sans\ Mono\ 10
+  ```
+
+- Windows
+
+  ```shell
+  if has('gui_running')
+    set guifont=Courier_New:h10
+  endif
+  ```
+
+  
+
