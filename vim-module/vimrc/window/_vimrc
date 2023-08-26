@@ -1,0 +1,84 @@
+set enc=utf-8
+" 不与VI兼容
+set nocompatible
+
+" 在菜单中显示文件类型
+let do_syntax_sel_menu = 1
+
+" 取消延迟加载菜单
+let do_no_lazyload_menus = 1
+" 添加fzf路径
+set rtp+=E:\fzf 
+
+source $VIMRUNTIME/vimrc_example.vim
+
+" 不产生备份文件，但保留跨会话撤销编辑的能力；
+set nobackup
+set undodir=~\vimfiles\undodir
+
+if !isdirectory(&undodir)
+  call mkdir(&undodir, 'p', 0700)
+endif
+
+" 图形界面正在运行或终端是 xterm 兼容，并且不是 Mac（Mac 上的终端声称自己是 xterm，但行为并不完全相同）时将启用完全的鼠标支持（mouse=a）
+if has('mouse')
+  if has('gui_running') || (&term =~ 'xterm' && !has('mac'))
+    set mouse=a
+  else
+    set mouse=nvi
+  endif
+endif
+
+" Vim 对文件解码顺序
+set fileencodings=ucs-bom,utf-8,gb18030,latin1
+
+" 字体
+if has('gui_running')
+  set guifont=Courier_New:h10
+endif
+
+" 屏幕滚动时，顶部底部鼠标不能选中的行数
+set scrolloff=1
+
+" 配置minpac包管理器
+if exists('*minpac#init')
+  " Minpac is loaded.
+  call minpac#init()
+  call minpac#add('k-takata/minpac', {'type': 'opt'})
+
+  " Other plugins
+  call minpac#add('tpope/vim-eunuch')
+  call minpac#add('yegappan/mru')
+  call minpac#add('preservim/nerdtree')
+  call minpac#add('skywind3000/asyncrun.vim')
+  call minpac#add('tpope/vim-surround')
+  call minpac#add('tpope/vim-repeat')
+  call minpac#add('mbbill/undotree') 
+  call minpac#add('junegunn/fzf', {'do': {-> fzf#install()}})
+  call minpac#add('junegunn/fzf.vim')
+endif
+
+if has('eval')
+  " Minpac commands
+  command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})
+  command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
+  command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
+endif
+
+" 配置没有图形界面，在文本界面唤起菜单
+if !has('gui_running')
+  " 设置文本菜单
+  if has('wildmenu')
+    set wildmenu
+    set cpoptions-=<
+    set wildcharm=<C-Z>
+    nnoremap <F10>      :emenu <C-Z>
+    inoremap <F10> <C-O>:emenu <C-Z>
+  endif
+endif
+
+" 切换窗口映射快捷键
+nnoremap <C-Tab>   <C-W>w
+inoremap <C-Tab>   <C-O><C-W>w
+nnoremap <C-S-Tab> <C-W>W
+inoremap <C-S-Tab> <C-O><C-W>W
