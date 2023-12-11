@@ -156,6 +156,3 @@ set fileencodings=ucs-bom,utf-8,gb18030,latin1
 ```shell
 set scrolloff=1
 ```
-
-
-
