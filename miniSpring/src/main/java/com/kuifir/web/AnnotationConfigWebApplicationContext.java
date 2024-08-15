@@ -73,7 +73,8 @@ public class AnnotationConfigWebApplicationContext extends AbstractApplicationCo
 
     private Collection<String> scanPackage(String packageName) {
         List<String> tempControllerNames = new ArrayList<>();
-        URL url = this.getClass().getClassLoader().getResource("/" + packageName.replaceAll("\\.", "/"));
+        System.out.println("packageName=========" + packageName);
+        URL url = this.getClass().getClassLoader().getResource( packageName.replaceAll("\\.", "/"));
         File dir = new File(url.getFile());
         for (File file : Objects.requireNonNull(dir.listFiles())) {
             if (file.isDirectory()) {
