@@ -11,6 +11,11 @@ public class DoublyLinkList<E> implements LinkedList<E> {
     int size = 0;
     Node<E> first;
     Node<E> last;
+
+    public int getSize() {
+        return size;
+    }
+
     private boolean isElementIndex(int index) {
         return index > 0 && index <= size;
     }
@@ -53,7 +58,23 @@ public class DoublyLinkList<E> implements LinkedList<E> {
         }
         return -1;
     }
-
+    // 时间复杂度:O(n)
+    public Node<E> findNode(E e) {
+        if (e != null) {
+            for (Node<E> p = first; p != null; p = p.next) {
+                if (e.equals(p.item)) {
+                   return p;
+                }
+            }
+        } else {
+            for (Node<E> p = first; p != null; p = p.next) {
+                if (p.item == null) {
+                    return p;
+                }
+            }
+        }
+        return null;
+    }
     // 时间复杂度O(n)
     public boolean listInsert( int i, E e) {
         if(i<=0 || i > size+1){
