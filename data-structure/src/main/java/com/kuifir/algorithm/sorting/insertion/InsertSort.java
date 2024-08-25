@@ -47,6 +47,11 @@ public class InsertSort {
         return a;
     }
 
+    /**
+     * 折半插入排序
+     * @param a
+     * @return
+     */
     public static int[] binaryInsertSort(int[] a) {
         for (int i = 1; i < a.length; i++) {
             if (a[i] < a[i - 1]) {
