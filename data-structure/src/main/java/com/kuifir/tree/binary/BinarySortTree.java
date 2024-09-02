@@ -2,6 +2,14 @@ package com.kuifir.tree.binary;
 
 import java.util.Stack;
 
+/**
+ * 二叉排序树
+ * 二叉排序树或者是一颗空树，或者是具有下列性质的二叉树:
+ * 1. 若它的左子树不空，则左子树上所有结点的值均小于它的根节点的值
+ * 2. 若它的右子树不空，则右子树上的所有节点均大于它的根结点的值
+ * 3. 它的左子树、右子树也分别为二叉排序树
+ * @param <T>
+ */
 public class BinarySortTree<T extends Comparable<T>> {
     private Node<T> root;
 
