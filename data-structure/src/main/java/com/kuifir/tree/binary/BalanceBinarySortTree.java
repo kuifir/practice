@@ -53,6 +53,14 @@ public class BalanceBinarySortTree<T extends Comparable<T>> {
         insert(root, e);
     }
 
+    public void delete(T e) {
+        Node<T> search = search(e);
+        if (search == null) {
+            return;
+        }
+        delete(root, e);
+    }
+
     int getHigh(Node<T> node) {
         if (node == null) {
             return 0;
@@ -206,6 +214,111 @@ public class BalanceBinarySortTree<T extends Comparable<T>> {
         }
     }
 
+    boolean delete(Node<T> node, T e) {
+        if (node == null) {
+            return false;
+        }
+        int compareTo = node.data.compareTo(e);
+
+        boolean result = false;
+        if (compareTo > 0) {
+            result = delete(node.left, e);
+        } else if (compareTo < 0) {
+            result = delete(node.right, e);
+        } else {
+            int leftHigh = getHigh(node.left);
+            int rightHigh = getHigh(node.right);
+            Node<T> parent = node.parent;
+
+            // 没有子树
+            if (leftHigh == 0 && rightHigh == 0) {
+                if (parent == null) {
+                    root = null;
+                    return true;
+                }
+                // 判断是父节点的左子树还是右子树
+                boolean leftFlag = (parent.left == node);
+                if (leftFlag) {
+                    parent.left = null;
+                    parent.balanceFactor--;
+                } else {
+                    parent.right = null;
+                    parent.balanceFactor++;
+                }
+                return true;
+            } else if (leftHigh > 0 && rightHigh > 0) {
+                // 两个子树
+                if (leftHigh >= rightHigh) {
+                    Node<T> maxNode = getMaxNode(node.left);
+                    node.data = maxNode.data;
+                    result = delete(node.left, maxNode.data);
+                } else {
+                    Node<T> minNode = getMinNode(node.right);
+                    node.data = minNode.data;
+                    result = delete(node.right, minNode.data);
+                }
+            } else {
+                if (parent == null) {
+                    root = leftHigh > 0 ? node.left : node.right;
+                    return true;
+                }
+                // 判断是父节点的左子树还是右子树
+                boolean leftFlag = (parent.left == node);
+                // 只有一个子树
+                if (leftFlag) {
+                    parent.left = leftHigh > 0 ? node.left : node.right;
+                    node.parent.balanceFactor--;
+                } else {
+                    parent.right = leftHigh > 0 ? node.left : node.right;
+                    node.parent.balanceFactor++;
+                }
+                return true;
+            }
+        }
+        if (result) {
+            if (node.balanceFactor == -2) {
+                if (node.right.balanceFactor < 1) {
+                    leftRotate(node);
+                } else {
+                    rightRotate(node.right);
+                    leftRotate(node);
+                }
+            }
+            if (node.balanceFactor == 2) {
+                if (node.left.balanceFactor > -1) {
+                    rightRotate(node);
+                } else {
+                    leftRotate(node.left);
+                    rightRotate(node);
+                }
+            }
+            if (node.parent != null) {
+                node.parent.balanceFactor = getBalanceFactor(node.parent);
+            }
+        }
+        return result;
+    }
+
+    Node<T> getMaxNode(Node<T> node) {
+        if (node == null) {
+            return null;
+        }
+        while (node.right != null) {
+            node = node.right;
+        }
+        return node;
+    }
+
+    Node<T> getMinNode(Node<T> node) {
+        if (node == null) {
+            return null;
+        }
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node;
+    }
+
     static class Node<T> {
         private T data;
         /**
@@ -225,7 +338,7 @@ public class BalanceBinarySortTree<T extends Comparable<T>> {
 
         @Override
         public String toString() {
-            return data + " ";
+            return "(" + data + "-" + balanceFactor + ") ";
         }
     }
 }
