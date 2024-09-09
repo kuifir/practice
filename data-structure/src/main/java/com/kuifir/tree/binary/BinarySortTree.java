@@ -1,5 +1,7 @@
 package com.kuifir.tree.binary;
 
+import com.kuifir.tree.interfaces.SortTree;
+
 import java.util.Stack;
 
 /**
@@ -10,7 +12,7 @@ import java.util.Stack;
  * 3. 它的左子树、右子树也分别为二叉排序树
  * @param <T>
  */
-public class BinarySortTree<T extends Comparable<T>> {
+public class BinarySortTree<T extends Comparable<T>> implements SortTree<T> {
     private Node<T> root;
 
     /**

@@ -1,5 +1,7 @@
 package com.kuifir.tree.binary;
 
+import com.kuifir.tree.interfaces.SortTree;
+
 import java.util.Stack;
 
 /**
@@ -9,7 +11,7 @@ import java.util.Stack;
  * 1. 左子树和右子树的深度之差的绝对值不超过1
  * 2. 左子树和右子树也是平衡二叉树
  */
-public class BalanceBinarySortTree<T extends Comparable<T>> {
+public class BalanceBinarySortTree<T extends Comparable<T>> implements SortTree<T> {
     private Node<T> root;
 
     Node<T> search(T e) {
