@@ -112,8 +112,7 @@ public class BTree<T extends Comparable<T>> implements SortTree<T> {
         }
         for (int i = 0; i < t.keyNum; i++) {
             print(t.child[i]);
-            System.out.print((t.data[i]));
-            System.out.println();
+            System.out.print(t.data[i] + " ");
             if (i == t.keyNum - 1) {
                 print(t.child[i + 1]);
             }
@@ -187,6 +186,155 @@ public class BTree<T extends Comparable<T>> implements SortTree<T> {
         } else {
             return search(node.child[i + 1], e, result);
         }
+    }
+
+    public void delete(T e) {
+        Result<T> search = search(e);
+        if (!search.success) {
+            return;
+        }
+        delete(search.node, e, search.index);
+    }
+
+    void delete(BTNode<T> node, T e, int index) {
+        // 删除后数量符合定义，直接删除
+        boolean leafNode = isLeafNode(node);
+        // 如果删除叶子节点，直接删除后处理
+        if (leafNode) {
+            for (int i = index; i < node.keyNum - 1; i++) {
+                node.data[i] = node.data[i + 1];
+                node.child[i + 1] = node.child[i + 2];
+            }
+            node.data[node.keyNum - 1] = null;
+            node.child[node.keyNum] = null;
+            node.keyNum--;
+            size--;
+            solveUnderflow(node, index);
+        } else {
+            // 如果删除非叶子节点，交换直接 前驱/后继 节点，转成叶子结点的删除
+            BTNode<T> tmpNode = node.child[index + 1];
+            T tmpData = node.data[index];
+            while (!isLeafNode(tmpNode)) {
+                tmpNode = tmpNode.child[0];
+            }
+            // 此时tmpNode为后继节点
+            // 交换数据
+            node.data[index] = tmpNode.data[0];
+            tmpNode.data[0] = tmpData;
+            delete(tmpNode, e, 0);
+        }
+    }
+
+    void solveUnderflow(BTNode<T> node, int index) {
+        if (node.parent == null) {
+            return;
+        }
+        if (node.keyNum > (m + 1) / 2 - 2) {
+            return;
+        } else {
+            // 如果左右节点有一个大于 (m+1)/2，
+            // 则向父节点下移到当前节点，兄弟节点上移相应的的节点到父节点（为左，则上移最右的节点，为右上移最左的节点）
+            // 保证中序遍历顺序性
+            BTNode<T> parent = node.parent;
+            // 查找该节点的兄弟节点
+            int i = 0;
+            while (parent.child[i] != node) {
+                i++;
+            }
+            BTNode<T> leftBrother = i == 0 ? null : parent.child[i - 1];
+            BTNode<T> rightBrother = i == parent.keyNum ? null : parent.child[i + 1];
+            boolean leftExitFlag = leftBrother != null;
+            if (rightBrother != null && rightBrother.keyNum > (m + 1) / 2 - 1) {
+                T datum = parent.data[i];
+                // 处理父节点
+                parent.data[i] = rightBrother.data[0];
+                // 处理本节点
+                int k = node.keyNum + 1;
+                while (k > 0 && (node.data[k] == null || (node.data[k] != null && node.data[k].compareTo(datum) > 0))) {
+                    node.data[k] = node.data[--k];
+                }
+                node.data[k] = datum;
+                node.keyNum++;
+                size++;
+                // 处理右节点
+                delete(rightBrother, rightBrother.data[0], 0);
+            } else if (leftBrother != null && leftBrother.keyNum > (m + 1) / 2 - 1) {
+                T datum = parent.data[i - 1];
+                // 处理父节点
+                parent.data[i - 1] = leftBrother.data[leftBrother.keyNum - 1];
+                // 处理本节点
+                int k = node.keyNum + 1;
+                while (k > 0 && (node.data[k] == null || (node.data[k] != null && node.data[k].compareTo(datum) > 0))) {
+                    node.data[k] = node.data[--k];
+                }
+                node.data[k] = datum;
+                node.keyNum++;
+                size++;
+                // 处理左节点
+                delete(leftBrother, leftBrother.data[leftBrother.keyNum - 1], leftBrother.keyNum - 1);
+            } else {
+                // 如果都不满足，只下移动父节点中的相应节点，然后处理父节点下溢问题
+
+                T datum = leftExitFlag ? parent.data[i - 1] : parent.data[i];
+                // 处理本节点
+                int k = node.keyNum + 1;
+                while (k > 0 && (node.data[k] == null || (node.data[k] != null && node.data[k].compareTo(datum) > 0))) {
+                    node.data[k] = node.data[--k];
+                }
+                node.data[k] = datum;
+                node.keyNum++;
+                if (leftExitFlag) {
+                    // 处理父节点
+                    for (int j = i - 1; j < parent.keyNum; j++) {
+                        parent.data[j] = parent.data[j + 1];
+                        parent.child[j + 1] = parent.child[j + 2];
+                    }
+                    parent.child[parent.keyNum] = null;
+                    parent.keyNum--;
+
+                    // 处理左节点
+                    System.arraycopy(node.data, 0, leftBrother.data, leftBrother.keyNum, node.keyNum);
+                    System.arraycopy(node.child, 0, leftBrother.child, leftBrother.keyNum + 1, node.keyNum);
+                    leftBrother.keyNum += node.keyNum;
+                    // 如果父节点为根节点
+                    if (parent.keyNum == 0 && parent.parent == null) {
+                        leftBrother.parent = null;
+                        root = leftBrother;
+                    }
+                } else {
+                    // 处理父节点
+                    for (int j = i; j < parent.keyNum; j++) {
+                        parent.data[j] = parent.data[j + 1];
+                        parent.child[j] = parent.child[j + 1];
+                    }
+                    parent.child[parent.keyNum] = null;
+                    parent.keyNum--;
+
+                    // 处理右节点
+                    System.arraycopy(rightBrother.data, 0, rightBrother.data, node.keyNum, rightBrother.keyNum);
+                    System.arraycopy(node.data, 0, rightBrother.data, 0, node.keyNum);
+
+                    System.arraycopy(rightBrother.child, 0, rightBrother.child, node.keyNum, rightBrother.keyNum + 1);
+                    System.arraycopy(node.child, 0, rightBrother.child, 0, node.keyNum);
+                    rightBrother.keyNum += node.keyNum;
+
+                    // 父节点为根节点
+                    if (parent.keyNum == 0 && parent.parent == null) {
+                        rightBrother.parent = null;
+                        root = rightBrother;
+                    }
+                }
+                solveUnderflow(parent, leftExitFlag ? i - 1 : i + 1);
+            }
+
+        }
+    }
+
+    boolean isLeafNode(BTNode<T> node) {
+        if (node == null) {
+            return true;
+        }
+        return Arrays.stream(node.child).allMatch(Objects::isNull);
     }
 
     class Result<T extends Comparable<T>> {
