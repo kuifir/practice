@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
-public class BinaryTree<T extends Comparable<T>> {
+public class BinaryTree<T> {
     private Node<T> root;
 
 
     /**
+     * 不支持重复节点
      * @param preList     二叉树先序遍历结果，内容不包含null节点
      * @param inOrderList 二叉树中序遍历结果，内容不包含null节点
      * @throws Exception
@@ -29,7 +30,7 @@ public class BinaryTree<T extends Comparable<T>> {
         Node<T> node = new Node<>(parent);
         for (int i = 0; i < inOrderList.size(); i++) {
             // 中序遍历，根节点在中间
-            if (inOrderList.get(i).compareTo(parent) == 0) {
+            if (inOrderList.get(i).equals(parent)) {
                 List<T> leftInOrderChild = inOrderList.subList(0, i);
                 List<T> rightInOrderChild = inOrderList.subList(i + 1, inOrderList.size());
                 List<T> leftPreOrderChild = null;
@@ -38,7 +39,7 @@ public class BinaryTree<T extends Comparable<T>> {
                    rightPreOrderChild = preList.subList(1, preList.size());
                 }else {
                     for (int i1 = 0; i1 < preList.size(); i1++) {
-                        if (preList.get(i1).compareTo(leftInOrderChild.getLast()) == 0) {
+                        if (preList.get(i1).equals(leftInOrderChild.getLast())) {
                             leftPreOrderChild = preList.subList(1, i1 + 1);
                             rightPreOrderChild = preList.subList(i1 + 1, preList.size());
                         }
@@ -53,6 +54,10 @@ public class BinaryTree<T extends Comparable<T>> {
         return node;
     }
 
+    /**
+     * 全节点先序遍历构造
+     * @param list
+     */
     public void initNode(Queue<T> list) {
         initNode(root, list);
     }
@@ -158,7 +163,7 @@ public class BinaryTree<T extends Comparable<T>> {
         }
     }
 
-    static class Node<T extends Comparable<T>> {
+    static class Node<T> {
         T data;
         Node<T> left;
         Node<T> right;
