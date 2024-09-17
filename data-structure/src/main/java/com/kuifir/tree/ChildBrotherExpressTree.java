@@ -2,6 +2,7 @@ package com.kuifir.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * 树的孩子兄弟表示法
@@ -77,6 +78,27 @@ public class ChildBrotherExpressTree<T> {
         printRootLast(node.firstChild);
         System.out.print(node.data + " ");
         printRootLast(node.brothers);
+    }
+
+    public void printAllPath() {
+        printAllPath(root, new Stack<>());
+    }
+
+    void printAllPath(Node<T> node, Stack<Node<T>> stack) {
+        if (node == null) {
+            return;
+        }
+        stack.push(node);
+        if (node.firstChild == null) {
+            for (Node<T> tNode : stack) {
+                System.out.print(tNode.data + " ");
+            }
+            System.out.println();
+        } else {
+            printAllPath(node.firstChild, stack);
+        }
+        stack.pop();
+        printAllPath(node.brothers, stack);
     }
 
     public ChildBrotherExpressTree() {

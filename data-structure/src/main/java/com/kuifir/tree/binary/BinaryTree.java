@@ -86,6 +86,25 @@ public class BinaryTree<T> {
         System.out.println();
         printPostOrder2(root);
     }
+    public void printAllPath(){
+        printAllPath(root,new Stack<>());
+    }
+    void printAllPath(Node<T> node, Stack<Node<T>> stack){
+        if(node == null){
+            return;
+        }
+        stack.push(node);
+        if(node.right == null && node.left == null){
+            for (Node<T> tNode : stack) {
+                System.out.print(tNode.data + " ");
+            }
+            System.out.println();
+        }else {
+            printAllPath(node.left,stack);
+            printAllPath(node.right,stack);
+        }
+        stack.pop();
+    }
 
     void printPreOrder(Node<T> node) {
         if (node == null) {

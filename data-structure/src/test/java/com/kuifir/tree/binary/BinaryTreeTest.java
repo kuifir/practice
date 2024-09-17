@@ -39,6 +39,8 @@ class BinaryTreeTest {
         List<Character> inOrderList = Stream.of('a', '*', 'b', '-', 'c').toList();
         binaryTree.initByPreAndInOrder(preOrderList, inOrderList);
         binaryTree.print();
+        System.out.println();
+        binaryTree.printAllPath();
     }
 
     @Test
@@ -47,5 +49,7 @@ class BinaryTreeTest {
         List<Character> inOrderList = Stream.of('B', 'D', 'C', 'E', 'A','F','H','G').toList();
         binaryTree.initByPreAndInOrder(preOrderList, inOrderList);
         binaryTree.print();
+        System.out.println();
+        binaryTree.printAllPath();
     }
 }

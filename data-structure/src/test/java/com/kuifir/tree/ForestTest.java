@@ -52,6 +52,7 @@ class ForestTest {
     void toChildBrotherExpress() {
         ChildBrotherExpressTree childBrotherExpress = forest.toChildBrotherExpress();
         childBrotherExpress.print();
+        childBrotherExpress.printAllPath();
         Forest forest1 = childBrotherExpress.toForest();
     }
 }
