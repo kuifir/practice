@@ -40,5 +40,6 @@ class MultiwayTreeTest {
         multiwayTree.printLevelOrder();
         ChildBrotherExpressTree<Character> childBrotherExpress = multiwayTree.toChildBrotherExpress();
         childBrotherExpress.print();
+        MultiwayTree<Character> multiwayTree1 = childBrotherExpress.toMultiwayTree();
     }
 }

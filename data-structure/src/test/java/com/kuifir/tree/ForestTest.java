@@ -24,7 +24,7 @@ class ForestTest {
                 new ParentExpressTree.Node<>(7, 'G', 6),
                 new ParentExpressTree.Node<>(8, 'H', 6),
                 new ParentExpressTree.Node<>(9, 'I', 6),
-                new ParentExpressTree.Node<>(10, 'G', null),
+                new ParentExpressTree.Node<>(10, 'J', null),
                 new ParentExpressTree.Node<>(11, 'K', 10),
                 new ParentExpressTree.Node<>(12, 'L', 10),
                 new ParentExpressTree.Node<>(13, 'M', 10),
@@ -52,5 +52,6 @@ class ForestTest {
     void toChildBrotherExpress() {
         ChildBrotherExpressTree childBrotherExpress = forest.toChildBrotherExpress();
         childBrotherExpress.print();
+        Forest forest1 = childBrotherExpress.toForest();
     }
 }
