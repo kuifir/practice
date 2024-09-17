@@ -63,5 +63,12 @@ class ParentExpressTreeTest {
         parentExpressTree.setTree(nodeList);
         Forest<Character> forest = parentExpressTree.toForest();
         forest.print();
+        ChildBrotherExpressTree<Character> childBrotherExpress = parentExpressTree.toChildBrotherExpress();
+        childBrotherExpress.print();
+    }
+    @Test
+    void toChildBrotherExpress(){
+        ChildBrotherExpressTree<Character> childBrotherExpress = parentExpressTree.toChildBrotherExpress();
+        childBrotherExpress.print();
     }
 }

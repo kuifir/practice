@@ -12,17 +12,40 @@ import java.util.stream.Collectors;
 public class ParentExpressTree<T> {
     private List<Node<T>> tree;
 
-    public List<Node<T>> getTree() {
+    List<Node<T>> getTree() {
         return tree;
     }
 
-    public void setTree(List<Node<T>> tree) {
+    void setTree(List<Node<T>> tree) {
         this.tree = tree;
     }
 
+    public ChildBrotherExpressTree<T> toChildBrotherExpress() {
+        List<Node<T>> roots = getRootNodes();
+        Map<Integer, List<Node<T>>> parentIdChildMap = getParentIdChildMap();
+        ChildBrotherExpressTree.Node<T> childBrotherExpress = toChildBrotherExpress(roots, parentIdChildMap);
+        return new ChildBrotherExpressTree<>(childBrotherExpress);
+    }
+
+    ChildBrotherExpressTree.Node<T> toChildBrotherExpress(List<Node<T>> nodes, Map<Integer, List<Node<T>>> parentIdChildMap) {
+        if (nodes == null || nodes.isEmpty()) {
+            return null;
+        }
+        Node<T> node = nodes.removeFirst();
+        ChildBrotherExpressTree.Node<T> currentNode = new ChildBrotherExpressTree.Node<>(node.getData());
+        List<Node<T>> currentChild = parentIdChildMap.get(node.getId());
+        if (currentChild != null && !currentChild.isEmpty()) {
+            currentNode.firstChild = toChildBrotherExpress(currentChild, parentIdChildMap);
+        }
+        if(!nodes.isEmpty()){
+            currentNode.brothers = toChildBrotherExpress(nodes,parentIdChildMap);
+        }
+        return currentNode;
+    }
+
     public MultiwayTree<T> toMultiWayTree() {
-        List<Node<T>> roots = tree.stream().filter(e -> Objects.isNull(e.getParentId())).toList();
-        Map<Integer, List<Node<T>>> parentIdChildMap = tree.stream().filter(e -> Objects.nonNull(e.getParentId())).collect(Collectors.groupingBy(Node::getParentId));
+        List<Node<T>> roots = getRootNodes();
+        Map<Integer, List<Node<T>>> parentIdChildMap = getParentIdChildMap();
         List<TreeNode<T>> treeNodes = fillMultiwayTree(roots, parentIdChildMap);
         if (treeNodes == null || treeNodes.isEmpty()) {
             return new MultiwayTree<>(null);
@@ -31,13 +54,21 @@ public class ParentExpressTree<T> {
     }
 
     public Forest<T> toForest() {
-        List<Node<T>> roots = tree.stream().filter(e -> Objects.isNull(e.getParentId())).toList();
-        Map<Integer, List<Node<T>>> parentIdChildMap = tree.stream().filter(e -> Objects.nonNull(e.getParentId())).collect(Collectors.groupingBy(Node::getParentId));
+        List<Node<T>> roots = getRootNodes();
+        Map<Integer, List<Node<T>>> parentIdChildMap = getParentIdChildMap();
         List<TreeNode<T>> treeNodes = fillMultiwayTree(roots, parentIdChildMap);
         if (treeNodes == null || treeNodes.isEmpty()) {
             return new Forest<>(null);
         }
         return new Forest<>(treeNodes);
+    }
+
+    List<Node<T>> getRootNodes() {
+        return tree.stream().filter(e -> Objects.isNull(e.getParentId())).collect(Collectors.toList());
+    }
+
+    Map<Integer, List<Node<T>>> getParentIdChildMap() {
+        return tree.stream().filter(e -> Objects.nonNull(e.getParentId())).collect(Collectors.groupingBy(Node::getParentId));
     }
 
     List<TreeNode<T>> fillMultiwayTree(List<Node<T>> roots, Map<Integer, List<Node<T>>> parentIdChildRelation) {
