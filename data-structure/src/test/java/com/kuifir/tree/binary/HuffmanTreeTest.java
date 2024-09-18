@@ -20,4 +20,9 @@ class HuffmanTreeTest {
     void init() {
         Arrays.stream(huffmanTree.huffmanTreeNodes).forEach(System.out::println);
     }
+    @Test
+    void createHuffmanCode(){
+        String[] huffmanCode = huffmanTree.createHuffmanCode();
+        Arrays.stream(huffmanCode).forEach(System.out::println);
+    }
 }

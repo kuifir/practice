@@ -22,6 +22,21 @@ public class HuffmanTree<T> {
         this.huffmanTreeNodes = new HuffmanTreeNode[2 * capacity];
     }
 
+    public String[] createHuffmanCode(){
+        String[] result = new String[capacity];
+
+        for (int i = 1; i <=capacity; i++) {
+            StringBuilder stringBuilder = new StringBuilder();
+            int j = i;
+            while (huffmanTreeNodes[j].parent != 0){
+                int parent = huffmanTreeNodes[j].parent;
+                stringBuilder.append(huffmanTreeNodes[parent].leftChild == j ? '0' : '1');
+                j = parent;
+            }
+            result[i-1] = stringBuilder.reverse().toString();
+        }
+        return result;
+    }
     public void init(int[] weights) throws Exception {
         if (weights.length != capacity) {
             throw new Exception("节点数量错误");
@@ -49,7 +64,6 @@ public class HuffmanTree<T> {
     Pair<Integer, Integer> selectAndRemove(int index) {
         Pair<Integer, Integer> integerPair = new Pair<>();
         for (int i = 0; i < 2; i++) {
-
             int min = -1;
             for (int i1 = 1; i1 < index; i1++) {
                 if (huffmanTreeNodes[i1].parent != 0) {
