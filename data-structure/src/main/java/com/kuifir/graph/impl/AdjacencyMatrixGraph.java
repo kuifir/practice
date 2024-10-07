@@ -144,9 +144,21 @@ public class AdjacencyMatrixGraph implements Graph<String> {
 
     @Override
     public String toString() {
-        return "AdjacencyMatrixGraph{" +
-                "vexs=" + Arrays.toString(vexs) +
-                ", arcs=" + Arrays.toString(arcs) +
-                '}';
+        StringBuilder result = new StringBuilder();
+
+        result.append("AdjacencyMatrixGraph{" + "vexs=")
+                .append(Arrays.toString(vexs))
+                .append(", arcs=");
+        if (arcs.length == 0) {
+            result.append("{}");
+        } else {
+            result.append("{\n");
+            for (Integer[] arc : arcs) {
+                result.append(Arrays.toString(arc));
+                result.append("\n");
+            }
+            result.append("}");
+        }
+        return result.toString();
     }
 }
