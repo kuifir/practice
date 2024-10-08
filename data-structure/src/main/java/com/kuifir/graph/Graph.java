@@ -38,7 +38,7 @@ public interface Graph<T> {
      *
      * @param vex 图中的顶点
      */
-    void deleteVex(T vex);
+    void deleteVex(T vex) throws Exception;
 
     /**
      * 在图中增添弧<v,w>,如果是无向图，则还增添对称弧<w,v>
@@ -46,7 +46,7 @@ public interface Graph<T> {
      * @param v 图中的顶点
      * @param w 图中的另一个顶点
      */
-    void insertArc(T v, T w, int weight) throws Exception;
+    void insertArc(T v, T w, Comparable<?> weight) throws Exception;
 
     /**
      * 在图中删除弧<v,w>,如果是无向图，则还删除对称弧<w,v>

@@ -113,12 +113,12 @@ public class AdjacencyMatrixGraph implements Graph<String> {
     }
 
     @Override
-    public void insertArc(String v, String w, int weight) throws Exception {
+    public void insertArc(String v, String w, Comparable<?> weight) throws Exception {
         int i1 = locateVex(v);
         int i2 = locateVex(w);
-        arcs[i1][i2] = weight;
+        arcs[i1][i2] = (Integer) weight;
         if (isUndirectedGraph()) {
-            arcs[i2][i1] = weight;
+            arcs[i2][i1] = (Integer) weight;
         }
     }
 
