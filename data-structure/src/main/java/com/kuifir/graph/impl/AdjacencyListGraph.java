@@ -55,7 +55,7 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
         int i = locateVex(vex);
         if (i > -1) {
             ArcNode<A> arcNode = vertices[i].firstArc;
-            while (arcNode != null && vertices[arcNode.adjacencyVex].equals(w)) {
+            while (arcNode != null && !vertices[arcNode.adjacencyVex].data.equals(w)) {
                 arcNode = arcNode.nextArc;
             }
             if (arcNode != null) {
@@ -122,6 +122,8 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
                 } else {
                     preI.nextArc = tmpI.nextArc;
                 }
+            }else {
+                return;
             }
             if (isUndirectedGraph()) {
                 ArcNode<A> tmpJ = vertices[j].firstArc;
@@ -165,6 +167,7 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
                 builder.append(vertices[i]);
                 builder.append("\n");
             }
+            builder.append("]");
         } else {
             builder.append("[]");
         }
