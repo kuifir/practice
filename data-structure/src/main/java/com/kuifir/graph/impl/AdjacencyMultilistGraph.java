@@ -55,25 +55,25 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
         if (i > -1) {
             EdgeBox<A> edgeBox = vertexNodes[i].firstEdge;
             if (Objects.nonNull(edgeBox)) {
-                if (edgeBox.iVertex.equals(i)) {
-                    while (edgeBox != null && vertexNodes[edgeBox.jVertex] != w) {
+                while (edgeBox != null && vertexNodes[edgeBox.jVertex] != w && vertexNodes[edgeBox.iVertex] != w) {
+                    if (edgeBox.iVertex.equals(i)) {
                         edgeBox = edgeBox.iLink;
-                    }
-                    if (edgeBox != null) {
-                        if (edgeBox.iLink != null) {
-                            return vertexNodes[edgeBox.iLink.jVertex].data;
-                        }
-                    }
-                } else if (edgeBox.jVertex.equals(i)) {
-                    while (edgeBox != null && vertexNodes[edgeBox.iVertex] != w) {
+                    } else {
                         edgeBox = edgeBox.jLink;
                     }
-                    if (edgeBox != null) {
+                }
+                if (edgeBox != null) {
+                    if (edgeBox.iVertex.equals(i)) {
+                        if (edgeBox.iLink != null) {
+                            return edgeBox.iLink.iVertex.equals(i) ? vertexNodes[edgeBox.iLink.jVertex].data : vertexNodes[edgeBox.iLink.iVertex].data;
+                        }
+                    } else {
                         if (edgeBox.jLink != null) {
-                            return vertexNodes[edgeBox.jLink.iVertex].data;
+                            return edgeBox.jLink.iVertex.equals(i) ? vertexNodes[edgeBox.jLink.jVertex].data : vertexNodes[edgeBox.jLink.iVertex].data;
                         }
                     }
                 }
+
             }
         }
         return null;
@@ -97,8 +97,9 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
 
     /**
      * 暂未支持添加相同的边
-     * @param v 图中的顶点
-     * @param w 图中的另一个顶点
+     *
+     * @param v      图中的顶点
+     * @param w      图中的另一个顶点
      * @param weight
      * @throws Exception
      */
@@ -111,36 +112,63 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
             newEdge.info = (A) weight;
             newEdge.iVertex = i;
             newEdge.jVertex = j;
+//            if (vertexNodes[i].firstEdge == null && vertexNodes[j].firstEdge == null) {
+//                newEdge.iVertex = i;
+//                newEdge.jVertex = j;
+//            } else if (vertexNodes[i].firstEdge != null) {
+//                if (vertexNodes[i].firstEdge.iVertex == i) {
+//                    newEdge.iVertex = i;
+//                    newEdge.jVertex = j;
+//                } else {
+//                    newEdge.iVertex = j;
+//                    newEdge.jVertex = i;
+//                }
+//            } else {
+//                if (vertexNodes[j].firstEdge.iVertex == j) {
+//                    newEdge.iVertex = j;
+//                    newEdge.jVertex = i;
+//                } else {
+//                    newEdge.iVertex = i;
+//                    newEdge.jVertex = j;
+//                }
+//            }
+
             if (vertexNodes[i].firstEdge == null) {
                 vertexNodes[i].firstEdge = newEdge;
             } else {
                 EdgeBox<A> iEdge = vertexNodes[i].firstEdge;
-                if (iEdge.iVertex.equals(i)) {
-                    while (iEdge.iLink != null) {
+                EdgeBox<A> iPre = null;
+                while (iEdge != null) {
+                    iPre = iEdge;
+                    if (iEdge.iVertex.equals(i)) {
                         iEdge = iEdge.iLink;
-                    }
-                    iEdge.iLink = newEdge;
-                } else {
-                    while (iEdge.jLink != null) {
+                    } else {
                         iEdge = iEdge.jLink;
                     }
-                    iEdge.jLink = newEdge;
+                }
+                if (iPre.iVertex.equals(i)) {
+                    iPre.iLink = newEdge;
+                } else {
+                    iPre.jLink = newEdge;
                 }
             }
             if (vertexNodes[j].firstEdge == null) {
                 vertexNodes[j].firstEdge = newEdge;
             } else {
                 EdgeBox<A> jEdge = vertexNodes[j].firstEdge;
-                if (jEdge.iVertex.equals(j)) {
-                    while (jEdge.iLink != null) {
+                EdgeBox<A> jPre = null;
+                while (jEdge != null) {
+                    jPre = jEdge;
+                    if (jEdge.iVertex.equals(j)) {
                         jEdge = jEdge.iLink;
-                    }
-                    jEdge.iLink = newEdge;
-                } else {
-                    while (jEdge.jLink != null) {
+                    } else {
                         jEdge = jEdge.jLink;
                     }
-                    jEdge.jLink = newEdge;
+                }
+                if (jPre.iVertex.equals(j)) {
+                    jPre.iLink = newEdge;
+                } else {
+                    jPre.jLink = newEdge;
                 }
             }
             edgeNum++;
@@ -154,29 +182,37 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
         if (i > -1 && j > -1) {
             EdgeBox<A> iEdge = vertexNodes[i].firstEdge;
             EdgeBox<A> iPreEdge = null;
-            // 删除v节点链表的数据
-            if (iEdge.iVertex.equals(i)) {
-                while (iEdge != null && iEdge.jVertex != j) {
+            if (iEdge != null) {
+                // 删除v节点链表的数据
+                while (iEdge != null && iEdge.iVertex != j && iEdge.jVertex != j) {
                     iPreEdge = iEdge;
-                    iEdge = iEdge.iLink;
-                }
-                if (iEdge != null) {
-                    if (iEdge == vertexNodes[i].firstEdge) {
-                        vertexNodes[i].firstEdge = iEdge.iLink;
+                    if (iEdge.iVertex.equals(i)) {
+                        iEdge = iEdge.iLink;
                     } else {
-                        iPreEdge.iLink = iEdge.iLink;
+                        iEdge = iEdge.jLink;
                     }
                 }
-            } else {
-                while (iEdge != null && iEdge.iVertex != j) {
-                    iPreEdge = iEdge;
-                    iEdge = iEdge.jLink;
-                }
-                if (iEdge != null) {
-                    if (iEdge == vertexNodes[i].firstEdge) {
-                        vertexNodes[i].firstEdge = iEdge.jLink;
+                if (Objects.isNull(iPreEdge)) {
+                    if (iEdge.iVertex.equals(j)) {
+                        vertexNodes[i].firstEdge = iEdge.iLink;
                     } else {
-                        iPreEdge.jLink = iEdge.jLink;
+                        vertexNodes[i].firstEdge = iEdge.jLink;
+                    }
+                } else {
+                    if (iEdge != null) {
+                        if (iPreEdge.iVertex.equals(i)) {
+                            if (iEdge.iVertex.equals(i)) {
+                                iPreEdge.iLink = iEdge.iLink;
+                            } else {
+                                iPreEdge.iLink = iEdge.jLink;
+                            }
+                        } else {
+                            if (iEdge.iVertex.equals(i)) {
+                                iPreEdge.jLink = iEdge.iLink;
+                            } else {
+                                iPreEdge.jLink = iEdge.jLink;
+                            }
+                        }
                     }
                 }
             }
@@ -184,31 +220,41 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
             EdgeBox<A> jEdge = vertexNodes[j].firstEdge;
             EdgeBox<A> jPreEdge = null;
             // 删除v节点链表的数据
-            if (jEdge.iVertex.equals(j)) {
-                while (iEdge != null && iEdge.jVertex != i) {
+            if (jEdge != null) {
+                // 删除v节点链表的数据
+                while (jEdge != null && jEdge.iVertex != i && jEdge.jVertex != i) {
                     jPreEdge = jEdge;
-                    jEdge = jEdge.iLink;
-                }
-                if (jEdge != null) {
-                    if (jEdge == vertexNodes[j].firstEdge) {
-                        vertexNodes[j].firstEdge = jPreEdge.iLink;
+                    if (jEdge.iVertex.equals(j)) {
+                        jEdge = jEdge.iLink;
                     } else {
-                        jPreEdge.iLink = jEdge.iLink;
+                        jEdge = jEdge.jLink;
                     }
                 }
-            } else {
-                while (jEdge != null && jEdge.iVertex != i) {
-                    jPreEdge = jEdge;
-                    jEdge = jEdge.jLink;
-                }
-                if (jEdge != null) {
-                    if (jEdge == vertexNodes[j].firstEdge) {
-                        vertexNodes[j].firstEdge = jPreEdge.jLink;
+                if (Objects.isNull(jPreEdge)) {
+                    if (jEdge.iVertex.equals(i)) {
+                        vertexNodes[j].firstEdge = jEdge.iLink;
                     } else {
-                        jPreEdge.jLink = jEdge.jLink;
+                        vertexNodes[j].firstEdge = jEdge.jLink;
+                    }
+                } else {
+                    if (jEdge != null) {
+                        if (jPreEdge.iVertex.equals(j)) {
+                            if (jEdge.iVertex.equals(j)) {
+                                jPreEdge.iLink = jEdge.iLink;
+                            } else {
+                                jPreEdge.iLink = jEdge.jLink;
+                            }
+                        } else {
+                            if (jEdge.iVertex.equals(j)) {
+                                jPreEdge.jLink =jEdge.iLink;
+                            } else {
+                                jPreEdge.jLink = jEdge.jLink;
+                            }
+                        }
                     }
                 }
             }
+            edgeNum--;
         }
     }
 
