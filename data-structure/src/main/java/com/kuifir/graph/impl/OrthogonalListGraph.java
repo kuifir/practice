@@ -80,6 +80,13 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 暂未支持增加相同的弧
+     * @param v 图中的顶点
+     * @param w 图中的另一个顶点
+     * @param weight
+     * @throws Exception
+     */
     @Override
     public void insertArc(T v, T w, Comparable<?> weight) throws Exception {
         int i = locateVex(v);
@@ -180,6 +187,11 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
         return builder.toString();
     }
 
+    /**
+     * 顶点节点
+     * @param <T>
+     * @param <A>
+     */
     class VertexNode<T, A extends Comparable<A>> {
         T data;
         // 指向该顶点第一条入弧
@@ -197,6 +209,10 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
         }
     }
 
+    /**
+     * 弧节点
+     * @param <A>
+     */
     class ArcBox<A extends Comparable<A>> {
         /**
          * 和边相关信息(如：权值)
