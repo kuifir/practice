@@ -14,7 +14,7 @@ class OrthogonalListGraphTest {
 
     @BeforeEach
     void beforeEach() throws Exception {
-        Stream.of("V1", "V2", "V3", "V4").forEach(orthogonalListGraph::insertVex);
+        Stream.of("V1", "V2", "V3", "V4","V5").forEach(orthogonalListGraph::insertVex);
         List<String[]> data = Arrays.asList(
                 new String[]{"V1", "V2", "3"},
                 new String[]{"V1", "V3", "4"},
@@ -32,5 +32,10 @@ class OrthogonalListGraphTest {
     @Test
     void insertArc() {
         System.out.println(orthogonalListGraph);
+    }
+
+    @Test
+    void dfs(){
+        orthogonalListGraph.dfsTraverse();
     }
 }

@@ -2,6 +2,7 @@ package com.kuifir.graph.impl;
 
 import com.kuifir.graph.Graph;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -14,6 +15,7 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
     private int edgeNum;
 
     VertexNode<T, A>[] vertexNodes;
+    private boolean[] visited;
 
     public AdjacencyMultilistGraph(Integer maxVexNum) {
         this.maxVexNum = maxVexNum;
@@ -43,6 +45,8 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
             if (Objects.nonNull(firstEdge)) {
                 if (firstEdge.iVertex.equals(i)) {
                     return vertexNodes[firstEdge.jVertex].data;
+                }else {
+                    return vertexNodes[firstEdge.iVertex].data;
                 }
             }
         }
@@ -55,7 +59,7 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
         if (i > -1) {
             EdgeBox<A> edgeBox = vertexNodes[i].firstEdge;
             if (Objects.nonNull(edgeBox)) {
-                while (edgeBox != null && vertexNodes[edgeBox.jVertex] != w && vertexNodes[edgeBox.iVertex] != w) {
+                while (edgeBox != null && !vertexNodes[edgeBox.jVertex].data.equals(w) && !vertexNodes[edgeBox.iVertex].data.equals(w)) {
                     if (edgeBox.iVertex.equals(i)) {
                         edgeBox = edgeBox.iLink;
                     } else {
@@ -246,7 +250,7 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
                             }
                         } else {
                             if (jEdge.iVertex.equals(j)) {
-                                jPreEdge.jLink =jEdge.iLink;
+                                jPreEdge.jLink = jEdge.iLink;
                             } else {
                                 jPreEdge.jLink = jEdge.jLink;
                             }
@@ -259,8 +263,26 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
     }
 
     @Override
-    public void dfsTraverse() {
+    public void dfsTraverse() throws Exception {
+        visited = new boolean[vexNum];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i]) {
+                dfs_AM(i);
+                System.out.println();
+            }
+        }
+    }
 
+    void dfs_AM(int v) throws Exception {
+        VertexNode<T, A> vertexNode = vertexNodes[v];
+        System.out.print(vertexNode.data + " ");
+        visited[v] = true;
+        for (T t = firstAdjVex(vertexNode.data); t != null; t = nextAdjVex(vertexNode.data, t)) {
+            int i = locateVex(t);
+            if(!visited[i]){
+                dfs_AM(i);
+            }
+        }
     }
 
     @Override

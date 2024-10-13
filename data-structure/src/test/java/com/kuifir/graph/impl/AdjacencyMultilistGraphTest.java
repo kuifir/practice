@@ -33,4 +33,8 @@ class AdjacencyMultilistGraphTest {
     void insertArc() {
         System.out.println(adjacencyMultilistGraph.isUndirectedGraph());
     }
+    @Test
+    void dfs() throws Exception {
+        adjacencyMultilistGraph.dfsTraverse();
+    }
 }

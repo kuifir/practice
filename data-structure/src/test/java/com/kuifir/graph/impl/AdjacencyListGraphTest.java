@@ -58,4 +58,11 @@ class AdjacencyListGraphTest {
         System.out.println(adjacencyListDG);
         System.out.println(adjacencyListUDG);
     }
+
+    @Test
+    void dfs(){
+        adjacencyListUDG.dfsTraverse();
+        System.out.println();
+        adjacencyListDG.dfsTraverse();
+    }
 }

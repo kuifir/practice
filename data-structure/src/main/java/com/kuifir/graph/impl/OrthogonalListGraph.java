@@ -15,6 +15,8 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
     private int vexNum;
     private int arcNum;
 
+    private boolean[] visited;
+
     public OrthogonalListGraph(int maxVexNum) {
         this.maxVexNum = maxVexNum;
         vertices = new VertexNode[maxVexNum];
@@ -82,8 +84,9 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
 
     /**
      * 暂未支持增加相同的弧
-     * @param v 图中的顶点
-     * @param w 图中的另一个顶点
+     *
+     * @param v      图中的顶点
+     * @param w      图中的另一个顶点
      * @param weight
      * @throws Exception
      */
@@ -160,7 +163,24 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
 
     @Override
     public void dfsTraverse() {
+        visited = new boolean[vexNum];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i]) {
+                dfs_OL(i);
+                System.out.println();
+            }
+        }
+    }
 
+    void dfs_OL(int v) {
+        VertexNode<T, A> vertex = vertices[v];
+        System.out.print(vertex.data+" ");
+        visited[v] = true;
+        for (ArcBox<A> arcBox = vertex.firstOut; arcBox != null; arcBox = arcBox.tailLink) {
+            if (!visited[arcBox.headVex]) {
+                dfs_OL(arcBox.headVex);
+            }
+        }
     }
 
     @Override
@@ -189,6 +209,7 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
 
     /**
      * 顶点节点
+     *
      * @param <T>
      * @param <A>
      */
@@ -211,6 +232,7 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
 
     /**
      * 弧节点
+     *
      * @param <A>
      */
     class ArcBox<A extends Comparable<A>> {

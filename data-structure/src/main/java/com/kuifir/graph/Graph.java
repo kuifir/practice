@@ -59,7 +59,7 @@ public interface Graph<T> {
     /**
      * 对图进行深度优先遍历，在遍历过程中对每个顶顶访问一次
      */
-    void dfsTraverse();
+    void dfsTraverse() throws Exception;
 
     /**
      * 对图进行广度优先遍历，在遍历过程中对每个顶点访问一次

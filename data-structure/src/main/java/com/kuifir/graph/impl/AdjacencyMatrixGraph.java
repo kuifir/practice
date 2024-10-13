@@ -14,6 +14,7 @@ public class AdjacencyMatrixGraph implements Graph<String> {
     private final boolean unDirectedGraphFlag;
     private final int vexNum;
     private int arcNum;
+    private boolean[] visited;
 
     /**
      * 顶点表
@@ -132,9 +133,40 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         }
     }
 
+    /**
+     * 连接矩阵存储结构深度优先遍历
+     */
     @Override
-    public void dfsTraverse() {
-        // todo 连接矩阵存储结构深度优先遍历
+    public void dfsTraverse() throws Exception {
+        visited = new boolean[vexNum];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i]) {
+//                dfs(i);
+                dfs_AM(i);
+            }
+        }
+    }
+
+    void dfs_AM(int v) {
+        System.out.print(vexs[v] + " ");
+        visited[v] = true;
+        Integer[] arc = arcs[v];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i] && arc[i] != 0) {
+                dfs_AM(i);
+            }
+        }
+    }
+
+    void dfs(int v) throws Exception {
+        System.out.print(vexs[v] + " ");
+        visited[v] = true;
+        for (String w = firstAdjVex(vexs[v]); w != null; w = nextAdjVex(vexs[v], w)) {
+            int v1 = locateVex(w);
+            if (!visited[v1]) {
+                dfs(v1);
+            }
+        }
     }
 
     @Override

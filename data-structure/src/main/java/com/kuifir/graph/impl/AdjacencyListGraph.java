@@ -17,6 +17,8 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
     private int vexNum;
     private int arcNum;
 
+    private boolean[] visited;
+
     public AdjacencyListGraph(boolean unDirectedGraphFlag, int maxVexNum) {
         this.unDirectedGraphFlag = unDirectedGraphFlag;
         this.maxVexNum = maxVexNum;
@@ -122,7 +124,7 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
                 } else {
                     preI.nextArc = tmpI.nextArc;
                 }
-            }else {
+            } else {
                 return;
             }
             if (isUndirectedGraph()) {
@@ -144,9 +146,29 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
         }
     }
 
+    /**
+     * 邻接矩阵存储结构深度优先遍历
+     */
     @Override
     public void dfsTraverse() {
-        // todo 连接矩阵存储结构深度优先遍历
+        visited = new boolean[vexNum];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i]) {
+                dfs_AL(i);
+                System.out.println();
+            }
+        }
+    }
+
+    void dfs_AL(int v) {
+        VertexNode<T, A> vertex = vertices[v];
+        System.out.print(vertex.data + " ");
+        visited[v] = true;
+        for (ArcNode<A> tmp = vertex.firstArc; tmp != null; tmp = tmp.nextArc) {
+            if(!visited[tmp.adjacencyVex]){
+                dfs_AL(tmp.adjacencyVex);
+            }
+        }
     }
 
     @Override
