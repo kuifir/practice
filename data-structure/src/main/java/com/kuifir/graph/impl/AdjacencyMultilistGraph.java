@@ -2,8 +2,9 @@ package com.kuifir.graph.impl;
 
 import com.kuifir.graph.Graph;
 
-import java.util.Locale;
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Queue;
 
 /**
  * 无向图的邻接多重表存储结构
@@ -45,7 +46,7 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
             if (Objects.nonNull(firstEdge)) {
                 if (firstEdge.iVertex.equals(i)) {
                     return vertexNodes[firstEdge.jVertex].data;
-                }else {
+                } else {
                     return vertexNodes[firstEdge.iVertex].data;
                 }
             }
@@ -279,15 +280,39 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
         visited[v] = true;
         for (T t = firstAdjVex(vertexNode.data); t != null; t = nextAdjVex(vertexNode.data, t)) {
             int i = locateVex(t);
-            if(!visited[i]){
+            if (!visited[i]) {
                 dfs_AM(i);
             }
         }
     }
 
     @Override
-    public void bfsTraveres() {
+    public void bfsTraveres() throws Exception {
+        visited = new boolean[vexNum];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i]) {
+                bfs_AM(i);
+                System.out.println();
+            }
+        }
+    }
 
+    private void bfs_AM(int v) throws Exception {
+        System.out.print(vertexNodes[v].data + " ");
+        visited[v] = true;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(v);
+        while (!queue.isEmpty()) {
+            Integer poll = queue.poll();
+            for (T vex = this.firstAdjVex(vertexNodes[poll].data); vex != null; vex = nextAdjVex(vertexNodes[poll].data, vex)) {
+                int i = locateVex(vex);
+                if (!visited[i]) {
+                    System.out.print(vertexNodes[i].data + " ");
+                    visited[i] = true;
+                    queue.add(i);
+                }
+            }
+        }
     }
 
     /**

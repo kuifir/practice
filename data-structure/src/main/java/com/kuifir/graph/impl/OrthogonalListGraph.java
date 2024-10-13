@@ -2,6 +2,9 @@ package com.kuifir.graph.impl;
 
 import com.kuifir.graph.Graph;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * 有向图的十字链表存储结构
  *
@@ -184,9 +187,32 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
     }
 
     @Override
-    public void bfsTraveres() {
-
+    public void bfsTraveres() throws Exception {
+        visited = new boolean[vexNum];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i]) {
+                bfs_OL(i);
+                System.out.println();
+            }
+        }
     }
+
+    private void bfs_OL(int v) throws Exception {
+        System.out.print(vertices[v].data + " ");
+        visited[v] = true;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(v);
+        while (!queue.isEmpty()) {
+            Integer poll = queue.poll();
+            for (T vex = this.firstAdjVex(vertices[poll].data); vex != null; vex = nextAdjVex(vertices[poll].data, vex)) {
+                int i = locateVex(vex);
+                if (!visited[i]) {
+                    System.out.print(vertices[i].data + " ");
+                    visited[i] = true;
+                    queue.add(i);
+                }
+            }
+        }    }
 
     @Override
     public String toString() {

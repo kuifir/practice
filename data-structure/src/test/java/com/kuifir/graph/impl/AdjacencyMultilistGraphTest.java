@@ -37,4 +37,9 @@ class AdjacencyMultilistGraphTest {
     void dfs() throws Exception {
         adjacencyMultilistGraph.dfsTraverse();
     }
+
+    @Test
+    void bfs() throws Exception {
+        adjacencyMultilistGraph.bfsTraveres();
+    }
 }

@@ -2,6 +2,9 @@ package com.kuifir.graph.impl;
 
 import com.kuifir.graph.Graph;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * 图的邻接表存储结构
  *
@@ -147,7 +150,7 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
     }
 
     /**
-     * 邻接矩阵存储结构深度优先遍历
+     * 邻接表存储结构深度优先遍历
      */
     @Override
     public void dfsTraverse() {
@@ -165,15 +168,43 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
         System.out.print(vertex.data + " ");
         visited[v] = true;
         for (ArcNode<A> tmp = vertex.firstArc; tmp != null; tmp = tmp.nextArc) {
-            if(!visited[tmp.adjacencyVex]){
+            if (!visited[tmp.adjacencyVex]) {
                 dfs_AL(tmp.adjacencyVex);
             }
         }
     }
 
+    /**
+     * 邻接表存储结构广度优先遍历
+     */
     @Override
     public void bfsTraveres() {
-        // todo 邻接矩阵存储结构广度优先遍历
+        visited = new boolean[vexNum];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i]) {
+                bfs_AL(i);
+                System.out.println();
+            }
+        }
+    }
+
+    void bfs_AL(int v) {
+        System.out.print(vertices[v].data + " ");
+        visited[v] = true;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(v);
+        while (!queue.isEmpty()) {
+            Integer poll = queue.poll();
+            VertexNode<T, A> vertex = vertices[poll];
+            for (ArcNode<A> tmp = vertex.firstArc; tmp != null; tmp = tmp.nextArc) {
+                if (!visited[tmp.adjacencyVex]) {
+                    System.out.print(vertices[tmp.adjacencyVex].data + " ");
+                    visited[tmp.adjacencyVex] = true;
+                    queue.add(tmp.adjacencyVex);
+                }
+            }
+        }
+
     }
 
     @Override

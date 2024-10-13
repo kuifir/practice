@@ -3,6 +3,8 @@ package com.kuifir.graph.impl;
 import com.kuifir.graph.Graph;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
 /**
@@ -143,6 +145,7 @@ public class AdjacencyMatrixGraph implements Graph<String> {
             if (!visited[i]) {
 //                dfs(i);
                 dfs_AM(i);
+                System.out.println();
             }
         }
     }
@@ -169,9 +172,56 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         }
     }
 
+    /**
+     * 邻接矩阵存储结构广度优先遍历
+     */
     @Override
-    public void bfsTraveres() {
-        // todo 邻接矩阵存储结构广度优先遍历
+    public void bfsTraveres() throws Exception {
+        visited = new boolean[vexNum];
+        for (int i = 0; i < vexNum; i++) {
+            if (!visited[i]) {
+//                bfs(i);
+                bfs_AM(i);
+                System.out.println();
+            }
+        }
+    }
+
+    private void bfs(int v) throws Exception {
+        System.out.println(vexs[v] + " ");
+        visited[v] = true;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(v);
+        while (!queue.isEmpty()){
+            Integer poll = queue.poll();
+            for (String vex = this.firstAdjVex(vexs[poll]); vex!= null;vex = nextAdjVex(vexs[poll],vex)){
+                int i = locateVex(vex);
+                if(!visited[i]){
+                    System.out.print(vexs[i] + " ");
+                    visited[i] = true;
+                    queue.add(i);
+                }
+            }
+        }
+
+    }
+    private void bfs_AM(int v) {
+        System.out.print(vexs[v] + " ");
+        visited[v] = true;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(v);
+        while (!queue.isEmpty()) {
+            Integer peek = queue.poll();
+            Integer[] arc = arcs[peek];
+            for (int i = 0; i < vexNum; i++) {
+                if (!visited[i] && arc[i] != 0) {
+                    System.out.print(vexs[i] + " ");
+                    visited[i] = true;
+                    queue.add(i);
+                }
+            }
+        }
+
     }
 
     @Override

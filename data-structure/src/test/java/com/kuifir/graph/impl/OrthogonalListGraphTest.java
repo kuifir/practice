@@ -38,4 +38,8 @@ class OrthogonalListGraphTest {
     void dfs(){
         orthogonalListGraph.dfsTraverse();
     }
+    @Test
+    void bfs() throws Exception {
+        orthogonalListGraph.bfsTraveres();
+    }
 }

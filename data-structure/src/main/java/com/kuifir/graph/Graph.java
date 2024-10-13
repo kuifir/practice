@@ -64,5 +64,5 @@ public interface Graph<T> {
     /**
      * 对图进行广度优先遍历，在遍历过程中对每个顶点访问一次
      */
-    void bfsTraveres();
+    void bfsTraveres() throws Exception;
 }

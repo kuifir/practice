@@ -12,5 +12,7 @@ class AdjacencyMatrixGraphTest {
         AdjacencyMatrixGraph adjacencyMatrixGraph2 = new AdjacencyMatrixGraph(true, 8, 9);
         System.out.println(adjacencyMatrixGraph2);
         adjacencyMatrixGraph2.dfsTraverse();
+        System.out.println();
+        adjacencyMatrixGraph2.bfsTraveres();
     }
 }

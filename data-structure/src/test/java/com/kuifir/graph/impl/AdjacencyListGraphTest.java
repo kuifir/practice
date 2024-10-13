@@ -65,4 +65,10 @@ class AdjacencyListGraphTest {
         System.out.println();
         adjacencyListDG.dfsTraverse();
     }
+
+    @Test
+    void bfs(){
+        adjacencyListUDG.bfsTraveres();
+        adjacencyListDG.bfsTraveres();
+    }
 }
