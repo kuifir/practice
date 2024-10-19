@@ -2,7 +2,9 @@ package com.kuifir.graph.impl;
 
 import com.kuifir.graph.Graph;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -231,7 +233,43 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
 
     @Override
     public void bfsPath(T v, T w) throws Exception {
-
+        int i = locateVex(v);
+        int j = locateVex(w);
+        if (i > -1 && j > -1) {
+            visited = new boolean[vexNum];
+            bfPath(v, w, new LinkedList<>());
+        } else {
+            System.out.println("路径不存在");
+        }
+    }
+    private void bfPath(T v, T w, LinkedList<T> path) throws Exception {
+        int j = locateVex(v);
+        path.add(v);
+        List<Pair<Integer, Integer>> queue = new ArrayList<>();
+        queue.add(new Pair<>(null, j));
+        for (int tmp = 0; tmp < queue.size(); tmp++) {
+            Pair<Integer, Integer> pair = queue.get(tmp);
+            for (T vex = this.firstAdjVex(vertices[pair.b].data); vex != null; vex = nextAdjVex(vertices[pair.b].data, vex)) {
+                int i = locateVex(vex);
+                if (!visited[i]) {
+                    visited[i] = true;
+                    queue.add(new Pair<>(tmp, i));
+                    if (vertices[i].data.equals(w)) {
+                        printBFPath(queue, queue.size() - 1);
+                        System.out.println();
+                    }
+                }
+            }
+        }
+    }
+    private void printBFPath(List<Pair<Integer, Integer>> queue, int v) {
+        if (!queue.isEmpty()) {
+            Pair<Integer, Integer> pair = queue.get(v);
+            if (pair.a != null) {
+                printBFPath(queue, pair.a);
+            }
+            System.out.print(vertices[pair.b].data + ",");
+        }
     }
 
     private void bfs_OL(int v) throws Exception {

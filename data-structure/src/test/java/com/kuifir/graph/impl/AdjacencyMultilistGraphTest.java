@@ -46,4 +46,8 @@ class AdjacencyMultilistGraphTest {
     void dfPath() throws Exception {
         adjacencyMultilistGraph.dfsPath("V1","V5");
     }
+    @Test
+    void bfPath() throws Exception{
+        adjacencyMultilistGraph.bfsPath("V1","V5");
+    }
 }

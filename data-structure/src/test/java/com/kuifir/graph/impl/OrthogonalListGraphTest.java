@@ -51,4 +51,14 @@ class OrthogonalListGraphTest {
         orthogonalListGraph.dfsPath("V4","V2");
         System.out.println();
     }
+
+    @Test
+    void bfPath() throws Exception {
+        orthogonalListGraph.bfsPath("V1","V4");
+        System.out.println();
+        orthogonalListGraph.bfsPath("V1","V2");
+        System.out.println();
+        orthogonalListGraph.bfsPath("V4","V2");
+        System.out.println();
+    }
 }

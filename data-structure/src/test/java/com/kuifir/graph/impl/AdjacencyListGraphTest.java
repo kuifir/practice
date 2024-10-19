@@ -75,7 +75,7 @@ class AdjacencyListGraphTest {
 
     @Test
     void dfsPath() throws Exception {
-        adjacencyListUDG.dfsPath("V1","V5");
+        adjacencyListUDG.dfsPath("V1", "V5");
         System.out.println();
         adjacencyListDG.dfsPath("V1", "V5");
         System.out.println();
@@ -84,6 +84,20 @@ class AdjacencyListGraphTest {
         adjacencyListDG.dfsPath("V1", "V6");
         System.out.println();
         adjacencyListDG.dfsPath("V1", "V3");
+        System.out.println();
+    }
+
+    @Test
+    void bfsPath() throws Exception {
+        adjacencyListUDG.bfsPath("V1", "V5");
+        System.out.println();
+        adjacencyListDG.bfsPath("V1", "V5");
+        System.out.println();
+        adjacencyListDG.bfsPath("V6", "V3");
+        System.out.println();
+        adjacencyListDG.bfsPath("V1", "V6");
+        System.out.println();
+        adjacencyListDG.bfsPath("V1", "V3");
         System.out.println();
     }
 }

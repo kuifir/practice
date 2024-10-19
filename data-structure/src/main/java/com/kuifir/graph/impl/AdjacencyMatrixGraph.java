@@ -2,10 +2,7 @@ package com.kuifir.graph.impl;
 
 import com.kuifir.graph.Graph;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * 图的邻接矩阵存储结构
@@ -222,7 +219,46 @@ public class AdjacencyMatrixGraph implements Graph<String> {
 
     @Override
     public void bfsPath(String v, String w) throws Exception {
+        int i = locateVex(v);
+        int j = locateVex(w);
+        if (i > -1 && j > -1) {
+            visited = new boolean[vexNum];
+            bfPath(v, w, new LinkedList<>());
+        } else {
+            System.out.println("路径不存在");
+        }
+    }
 
+    private void bfPath(String v, String w, LinkedList<String> path) throws Exception {
+        int j = locateVex(v);
+        visited[j] = true;
+        path.add(v);
+        List<Pair<Integer, Integer>> queue = new ArrayList<>();
+        queue.add(new Pair<>(null, j));
+        for (int tmp = 0; tmp < queue.size(); tmp++) {
+            Pair<Integer, Integer> peek = queue.get(tmp);
+            Integer[] arc = arcs[peek.b];
+            visited[peek.b] = true;
+            for (int i = 0; i < vexNum; i++) {
+                if (!visited[i] && arc[i] != 0) {
+                    queue.add(new Pair<>(tmp, i));
+                    if (vexs[i].equals(w)) {
+                        printBFPath(queue, queue.size() - 1);
+                        System.out.println();
+                    }
+                }
+            }
+        }
+    }
+
+    private void printBFPath(List<Pair<Integer, Integer>> queue, int v) {
+        if (!queue.isEmpty()) {
+            Pair<Integer, Integer> pair = queue.get(v);
+            if (pair.a != null) {
+                printBFPath(queue, pair.a);
+            }
+            System.out.print(vexs[pair.b] + ",");
+        }
     }
 
     private void bfs(int v) throws Exception {
