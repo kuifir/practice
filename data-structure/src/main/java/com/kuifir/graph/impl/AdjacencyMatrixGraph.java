@@ -24,6 +24,22 @@ public class AdjacencyMatrixGraph implements Graph<String> {
      */
     private Integer[][] arcs;
 
+    public AdjacencyMatrixGraph(boolean unDirectedGraphFlag, String[] vexs) {
+        this.unDirectedGraphFlag = unDirectedGraphFlag;
+        this.vexs = vexs;
+        this.vexNum = vexs.length;
+        arcs = new Integer[vexNum][vexNum];
+        for (Integer[] arc : arcs) {
+            Arrays.fill(arc, 0);
+        }
+    }
+    public AdjacencyMatrixGraph(boolean unDirectedGraphFlag, String[] vexs, Integer[][] arcs,int arcNum) {
+        this.unDirectedGraphFlag = unDirectedGraphFlag;
+        this.vexs = vexs;
+        this.vexNum = vexs.length;
+        this.arcNum = arcNum;
+        this.arcs = arcs;
+    }
 
     public AdjacencyMatrixGraph(boolean unDirectedGraphFlag, int vexNum, int arcNum) {
         this.unDirectedGraphFlag = unDirectedGraphFlag;
@@ -117,8 +133,10 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         int i1 = locateVex(v);
         int i2 = locateVex(w);
         arcs[i1][i2] = (Integer) weight;
+        arcNum++;
         if (isUndirectedGraph()) {
             arcs[i2][i1] = (Integer) weight;
+            arcNum++;
         }
     }
 
@@ -127,8 +145,10 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         int i1 = locateVex(v);
         int i2 = locateVex(w);
         arcs[i1][i2] = 0;
+        arcNum--;
         if (isUndirectedGraph()) {
             arcs[i2][i1] = 0;
+            arcNum--;
         }
     }
 
@@ -317,5 +337,25 @@ public class AdjacencyMatrixGraph implements Graph<String> {
             result.append("}");
         }
         return result.toString();
+    }
+
+    public boolean isUnDirectedGraphFlag() {
+        return unDirectedGraphFlag;
+    }
+
+    public int getVexNum() {
+        return vexNum;
+    }
+
+    public int getArcNum() {
+        return arcNum;
+    }
+
+    public String[] getVexs() {
+        return vexs;
+    }
+
+    public Integer[][] getArcs() {
+        return arcs;
     }
 }
