@@ -297,6 +297,44 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
         }
     }
 
+    @Override
+    public void dfsPath(T v, T w) throws Exception {
+        int i = locateVex(v);
+        int j = locateVex(w);
+        if (i > -1 && j > -1) {
+            visited = new boolean[vexNum];
+            dfPath(v, w, new LinkedList<>());
+        } else {
+            System.out.println("路径不存在");
+        }
+    }
+
+    private void dfPath(T v, T w, LinkedList<T> path) throws Exception {
+        int i = locateVex(v);
+        path.add(v);
+        visited[i] = true;
+        VertexNode<T, A> vertexNode = vertexNodes[i];
+        for (T t = firstAdjVex(vertexNode.data); t != null; t = nextAdjVex(vertexNode.data, t)) {
+            int j = locateVex(t);
+            if (!visited[j]) {
+                if (vertexNodes[j].data.equals(w)) {
+                    visited[j] = true;
+                    path.add(vertexNodes[j].data);
+                    System.out.println(path);
+                } else {
+                    dfPath(vertexNodes[j].data, w, path);
+                }
+                visited[j] = false;
+                path.removeLast();
+            }
+        }
+    }
+
+    @Override
+    public void bfsPath(T v, T w) throws Exception {
+
+    }
+
     private void bfs_AM(int v) throws Exception {
         System.out.print(vertexNodes[v].data + " ");
         visited[v] = true;

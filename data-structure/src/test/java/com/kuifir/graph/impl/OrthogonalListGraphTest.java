@@ -42,4 +42,13 @@ class OrthogonalListGraphTest {
     void bfs() throws Exception {
         orthogonalListGraph.bfsTraveres();
     }
+    @Test
+    void dfPath() throws Exception {
+        orthogonalListGraph.dfsPath("V1","V4");
+        System.out.println();
+        orthogonalListGraph.dfsPath("V1","V2");
+        System.out.println();
+        orthogonalListGraph.dfsPath("V4","V2");
+        System.out.println();
+    }
 }

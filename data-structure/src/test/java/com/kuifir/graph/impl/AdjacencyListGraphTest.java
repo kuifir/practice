@@ -39,7 +39,7 @@ class AdjacencyListGraphTest {
                 new String[]{"V5", "V4", "5"},
                 new String[]{"V6", "V1", "3"},
                 new String[]{"V6", "V5", "1"}
-                );
+        );
         for (String[] strings : data) {
             adjacencyListDG.insertArc(strings[0], strings[1], Integer.valueOf(strings[2]));
         }
@@ -51,24 +51,39 @@ class AdjacencyListGraphTest {
         System.out.println(adjacencyListDG);
         System.out.println(adjacencyListUDG);
     }
+
     @Test
     void deleteVex() throws Exception {
-        adjacencyListUDG.deleteArc("V2","V3");
-        adjacencyListDG.deleteArc("V2","V3");
+        adjacencyListUDG.deleteArc("V2", "V3");
+        adjacencyListDG.deleteArc("V2", "V3");
         System.out.println(adjacencyListDG);
         System.out.println(adjacencyListUDG);
     }
 
     @Test
-    void dfs(){
+    void dfs() {
         adjacencyListUDG.dfsTraverse();
         System.out.println();
         adjacencyListDG.dfsTraverse();
     }
 
     @Test
-    void bfs(){
+    void bfs() {
         adjacencyListUDG.bfsTraveres();
         adjacencyListDG.bfsTraveres();
+    }
+
+    @Test
+    void dfsPath() throws Exception {
+        adjacencyListUDG.dfsPath("V1","V5");
+        System.out.println();
+        adjacencyListDG.dfsPath("V1", "V5");
+        System.out.println();
+        adjacencyListDG.dfsPath("V6", "V3");
+        System.out.println();
+        adjacencyListDG.dfsPath("V1", "V6");
+        System.out.println();
+        adjacencyListDG.dfsPath("V1", "V3");
+        System.out.println();
     }
 }

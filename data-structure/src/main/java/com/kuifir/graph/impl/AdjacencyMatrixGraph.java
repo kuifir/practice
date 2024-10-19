@@ -187,16 +187,54 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         }
     }
 
+    @Override
+    public void dfsPath(String v, String w) throws Exception {
+        int i = locateVex(v);
+        int j = locateVex(w);
+        if (i > -1 && j > -1) {
+            visited = new boolean[vexNum];
+            dfPath(v, w, new LinkedList<>());
+        } else {
+            System.out.println("路径不存在");
+        }
+    }
+
+    private void dfPath(String v, String w, LinkedList<String> path) throws Exception {
+        path.add(v);
+        int i = locateVex(v);
+        visited[i] = true;
+        Integer[] arc = arcs[i];
+        for (int j = 0; j < vexNum; j++) {
+            if (!visited[j] && arc[j] != 0) {
+                if (vexs[j].equals(w)) {
+                    visited[j] = true;
+                    path.add(vexs[j]);
+                    System.out.println(path);
+                } else {
+                    dfPath(vexs[j], w, path);
+                }
+                path.removeLast();
+                visited[j] = false;
+            }
+        }
+
+    }
+
+    @Override
+    public void bfsPath(String v, String w) throws Exception {
+
+    }
+
     private void bfs(int v) throws Exception {
         System.out.println(vexs[v] + " ");
         visited[v] = true;
         Queue<Integer> queue = new LinkedList<>();
         queue.add(v);
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             Integer poll = queue.poll();
-            for (String vex = this.firstAdjVex(vexs[poll]); vex!= null;vex = nextAdjVex(vexs[poll],vex)){
+            for (String vex = this.firstAdjVex(vexs[poll]); vex != null; vex = nextAdjVex(vexs[poll], vex)) {
                 int i = locateVex(vex);
-                if(!visited[i]){
+                if (!visited[i]) {
                     System.out.print(vexs[i] + " ");
                     visited[i] = true;
                     queue.add(i);
@@ -205,6 +243,7 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         }
 
     }
+
     private void bfs_AM(int v) {
         System.out.print(vexs[v] + " ");
         visited[v] = true;

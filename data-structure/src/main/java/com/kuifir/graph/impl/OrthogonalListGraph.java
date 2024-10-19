@@ -177,7 +177,7 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
 
     void dfs_OL(int v) {
         VertexNode<T, A> vertex = vertices[v];
-        System.out.print(vertex.data+" ");
+        System.out.print(vertex.data + " ");
         visited[v] = true;
         for (ArcBox<A> arcBox = vertex.firstOut; arcBox != null; arcBox = arcBox.tailLink) {
             if (!visited[arcBox.headVex]) {
@@ -197,6 +197,43 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
         }
     }
 
+    @Override
+    public void dfsPath(T v, T w) throws Exception {
+        int i = locateVex(v);
+        int j = locateVex(w);
+        if (i > -1 && j > -1) {
+            visited = new boolean[vexNum];
+            dfPath(v, w, new LinkedList<>());
+        } else {
+            System.out.println("路径不存在");
+        }
+    }
+
+    private void dfPath(T v, T w, LinkedList<T> path) throws Exception {
+        int i = locateVex(v);
+        path.add(v);
+        visited[i] = true;
+        VertexNode<T, A> vertex = vertices[i];
+        for (ArcBox<A> arcBox = vertex.firstOut; arcBox != null; arcBox = arcBox.tailLink) {
+            if (!visited[arcBox.headVex]) {
+                if (vertices[arcBox.headVex].data.equals(w)) {
+                    visited[arcBox.headVex] = true;
+                    path.add(vertices[arcBox.headVex].data);
+                    System.out.println(path);
+                } else {
+                    dfPath(vertices[arcBox.headVex].data,w,path);
+                }
+                visited[arcBox.headVex] = false;
+                path.removeLast();
+            }
+        }
+    }
+
+    @Override
+    public void bfsPath(T v, T w) throws Exception {
+
+    }
+
     private void bfs_OL(int v) throws Exception {
         System.out.print(vertices[v].data + " ");
         visited[v] = true;
@@ -212,7 +249,8 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
                     queue.add(i);
                 }
             }
-        }    }
+        }
+    }
 
     @Override
     public String toString() {

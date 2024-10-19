@@ -188,6 +188,43 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
         }
     }
 
+    @Override
+    public void dfsPath(T v, T w) throws Exception {
+        int i = locateVex(v);
+        int j = locateVex(w);
+        if (i > -1 && j > -1) {
+            visited = new boolean[vexNum];
+            dfPath(v, w, new LinkedList<>());
+        } else {
+            System.out.println("路径不存在");
+        }
+    }
+
+    private void dfPath(T v, T w, LinkedList<T> path) throws Exception {
+        int i = locateVex(v);
+        path.add(v);
+        visited[i] = true;
+        VertexNode<T, A> vertex = vertices[i];
+        for (ArcNode<A> arcNode = vertex.firstArc; arcNode != null; arcNode = arcNode.nextArc) {
+            if (!visited[arcNode.adjacencyVex]) {
+                if (vertices[arcNode.adjacencyVex].data.equals(w)) {
+                    visited[arcNode.adjacencyVex] = true;
+                    path.add(vertices[arcNode.adjacencyVex].data);
+                    System.out.println(path);
+                }else {
+                    dfPath(vertices[arcNode.adjacencyVex].data, w, path);
+                }
+                path.removeLast();
+                visited[arcNode.adjacencyVex] = false;
+            }
+        }
+    }
+
+    @Override
+    public void bfsPath(T v, T w) throws Exception {
+
+    }
+
     void bfs_AL(int v) {
         System.out.print(vertices[v].data + " ");
         visited[v] = true;

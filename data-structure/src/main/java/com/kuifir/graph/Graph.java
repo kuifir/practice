@@ -65,4 +65,21 @@ public interface Graph<T> {
      * 对图进行广度优先遍历，在遍历过程中对每个顶点访问一次
      */
     void bfsTraveres() throws Exception;
+
+    /**
+     * 打印 v -w 的简单路径（无回路）
+     * @param v
+     * @param w
+     * @throws Exception
+     */
+    void dfsPath(T v, T w) throws Exception;
+
+    /**
+     * v-m最短节点路径
+     * @param v
+     * @param w
+     * @throws Exception
+     */
+    void bfsPath(T v, T w) throws Exception;
+
 }
