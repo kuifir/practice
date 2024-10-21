@@ -242,6 +242,12 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
             System.out.println("路径不存在");
         }
     }
+
+    @Override
+    public void printJointPoint() throws Exception {
+
+    }
+
     private void bfPath(T v, T w, LinkedList<T> path) throws Exception {
         int j = locateVex(v);
         path.add(v);

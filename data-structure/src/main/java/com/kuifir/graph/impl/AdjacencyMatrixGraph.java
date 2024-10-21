@@ -249,6 +249,11 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         }
     }
 
+    @Override
+    public void printJointPoint() throws Exception {
+
+    }
+
     private void bfPath(String v, String w, LinkedList<String> path) throws Exception {
         int j = locateVex(v);
         visited[j] = true;

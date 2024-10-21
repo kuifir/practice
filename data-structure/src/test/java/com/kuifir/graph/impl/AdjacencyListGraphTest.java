@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class AdjacencyListGraphTest {
     private AdjacencyListGraph<String, Integer> adjacencyListUDG = new AdjacencyListGraph<>(true, 10);
     private AdjacencyListGraph<String, Integer> adjacencyListDG = new AdjacencyListGraph<>(false, 10);
@@ -99,5 +97,27 @@ class AdjacencyListGraphTest {
         System.out.println();
         adjacencyListDG.bfsPath("V1", "V3");
         System.out.println();
+    }
+
+    @Test
+    void printJointPoint() throws Exception {
+        adjacencyListUDG = new AdjacencyListGraph<>(true, 10);
+        Stream.of("a", "b", "c", "d", "e","f","g","h").forEach(adjacencyListUDG::insertVex);
+        List<String[]> data = Arrays.asList(
+                new String[]{"a", "b", "1"},
+                new String[]{"a", "f", "1"},
+                new String[]{"a", "g", "1"},
+                new String[]{"a", "h", "1"},
+                new String[]{"b", "c", "1"},
+                new String[]{"f", "c", "1"},
+                new String[]{"c", "d", "1"},
+                new String[]{"c", "e", "1"},
+                new String[]{"g", "h", "1"},
+                new String[]{"d", "e", "1"}
+        );
+        for (String[] strings : data) {
+            adjacencyListUDG.insertArc(strings[0], strings[1], Integer.valueOf(strings[2]));
+        }
+        adjacencyListUDG.printJointPoint();
     }
 }

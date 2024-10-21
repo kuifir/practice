@@ -82,4 +82,11 @@ public interface Graph<T> {
      */
     void bfsPath(T v, T w) throws Exception;
 
+    /**
+     * 打印连通图的关节点
+     * 关节点的判断
+     * 根节点：深度优先遍历是否只有一棵子树
+     * 其他节点：子树节点是否有到祖先的回边     */
+    void printJointPoint() throws Exception;
+
 }

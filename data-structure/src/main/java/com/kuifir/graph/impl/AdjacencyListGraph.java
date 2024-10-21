@@ -2,10 +2,8 @@ package com.kuifir.graph.impl;
 
 import com.kuifir.graph.Graph;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 图的邻接表存储结构
@@ -233,6 +231,60 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
             System.out.println("路径不存在");
         }
     }
+
+    @Override
+    public void printJointPoint() {
+        // 遍历节点
+        AtomicInteger count = new AtomicInteger(0);
+        // 记录每个节点第几个被访问到
+        Integer[] visited = new Integer[vexNum];
+        // 记录 low(v) = min {visited[v], low(w), low(k) }
+        // 如果 low[w] >= visited[v] 则为关节点
+        // w为v在深度优先遍历生成树的子节点，k为v在深度优先遍历生成树的回边
+        Integer[] lows = new Integer[vexNum];
+        //在深度优先遍历过程中,子递归返回后获取low();
+        VertexNode<T, A> vertex = vertices[0];
+        visited[0] = count.addAndGet(1);
+        ArcNode<A> arcNode = vertex.firstArc;
+        if (Objects.nonNull(arcNode)) {
+            printJointPoint(arcNode.adjacencyVex, count, visited, lows);
+        }
+        if (count.get() < vexNum) {
+            // 根是关节点
+            System.out.print(vertices[0].data + " ");
+            while (arcNode.nextArc != null) {
+                arcNode = arcNode.nextArc;
+                if(Objects.isNull(visited[arcNode.adjacencyVex])){
+                    printJointPoint(arcNode.adjacencyVex, count, visited, lows);
+                }
+            }
+        }
+    }
+
+    private void printJointPoint(Integer v, AtomicInteger count, Integer[] visited, Integer[] lows) {
+        int min = visited[v] = count.addAndGet(1);
+        VertexNode<T, A> vertex = vertices[v];
+        for (ArcNode<A> tmp = vertex.firstArc; tmp != null; tmp = tmp.nextArc) {
+            if (Objects.isNull(visited[tmp.adjacencyVex])) {
+                // 子树
+                printJointPoint(tmp.adjacencyVex, count, visited, lows);
+                if (lows[tmp.adjacencyVex] < min) {
+                    min = lows[tmp.adjacencyVex];
+                }
+                // 如果 low[w] >= visited[v] 则为关节点,表明没有祖先节点的回边
+                if (lows[tmp.adjacencyVex] >= visited[v]) {
+                    System.out.print(vertices[tmp.adjacencyVex].data + " ");
+                }
+            } else {
+                // 回边
+                if (visited[tmp.adjacencyVex] < min) {
+                    min = visited[tmp.adjacencyVex];
+                }
+            }
+        }
+        lows[v] = min;
+    }
+
 
     private void bfPath(T v, T w, LinkedList<T> path) throws Exception {
         int j = locateVex(v);
