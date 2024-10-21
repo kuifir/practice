@@ -101,6 +101,8 @@ class AdjacencyListGraphTest {
 
     @Test
     void printJointPoint() throws Exception {
+        adjacencyListDG.printJointPoint();
+        System.out.println();
         adjacencyListUDG = new AdjacencyListGraph<>(true, 10);
         Stream.of("a", "b", "c", "d", "e","f","g","h").forEach(adjacencyListUDG::insertVex);
         List<String[]> data = Arrays.asList(
@@ -119,5 +121,6 @@ class AdjacencyListGraphTest {
             adjacencyListUDG.insertArc(strings[0], strings[1], Integer.valueOf(strings[2]));
         }
         adjacencyListUDG.printJointPoint();
+        System.out.println();
     }
 }

@@ -234,6 +234,9 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
 
     @Override
     public void printJointPoint() {
+        if(!unDirectedGraphFlag){
+            throw new UnsupportedOperationException("有向图暂不支持打印关节点");
+        }
         // 遍历节点
         AtomicInteger count = new AtomicInteger(0);
         // 记录每个节点第几个被访问到
