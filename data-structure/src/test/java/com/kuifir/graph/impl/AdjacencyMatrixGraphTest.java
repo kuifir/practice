@@ -24,6 +24,19 @@ class AdjacencyMatrixGraphTest {
     void shortestPath_DIJ() throws Exception {
         adjacencyMatrixGraph.shortestPath_DIJ("V0");
     }
+    @Test
+    void shortestPath_Floyd() throws Exception {
+        String[] vexs = {"0", "1", "2", "3"};
+        Integer[][] arcs = {
+                {0, 1, 0, 4},
+                {0, 0, 9, 2},
+                {3, 5, 0, 8},
+                {0, 0, 6, 0},
+        };
+        adjacencyMatrixGraph = new AdjacencyMatrixGraph(true, vexs, arcs, 8);
+
+        adjacencyMatrixGraph.shortestPath_Floyd();
+    }
 
 
     public static void main(String[] args) throws Exception {

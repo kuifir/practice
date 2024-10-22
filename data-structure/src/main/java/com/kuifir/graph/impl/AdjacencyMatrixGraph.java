@@ -320,6 +320,59 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         }
     }
 
+    @Override
+    public void shortestPath_Floyd() throws Exception {
+        String[][] pathMatrix = new String[vexNum][vexNum];
+        Integer[][] weightMatrix = new Integer[vexNum][vexNum];
+        for (int i = 0; i < arcs.length; i++) {
+            for (int j = 0; j < arcs[i].length; j++) {
+                if (i == j) {
+                    weightMatrix[i][j] = 0;
+                    pathMatrix[i][j] = vexs[i];
+                }
+                if (arcs[i][j] > 0) {
+                    weightMatrix[i][j] = arcs[i][j];
+                }
+                pathMatrix[i][j] = vexs[i] + "->" + vexs[j];
+
+            }
+        }
+        // 路径之间依次插入节点，更新最短路径
+        for (int n = 0; n < vexNum; n++) {
+            // 跟新插入第n个节点后的最短路径
+            for (int i = 0; i < vexNum; i++) {
+                if (i == n || weightMatrix[i][n] == null) {
+                    // 插入的节点可以跳过他那一行，因为是一样的
+                    // 插入节点和源点不连通也跳过
+                    continue;
+                }
+                // 对第i行每列进行更新
+                for (int j = 0; j < vexNum; j++) {
+                    if (i == j || weightMatrix[n][j] == null) {
+                        // 自己和自己跳过
+                        // 插入节点和终点不连通也跳过
+                        continue;
+                    }
+                    if (weightMatrix[i][j] == null) {
+                        weightMatrix[i][j] = weightMatrix[i][n] + weightMatrix[n][j];
+                        pathMatrix[i][j] = pathMatrix[i][n] + "," + pathMatrix[n][j];
+                    } else {
+                        if (weightMatrix[i][j] > weightMatrix[i][n] + weightMatrix[n][j]) {
+                            weightMatrix[i][j] = weightMatrix[i][n] + weightMatrix[n][j];
+                            pathMatrix[i][j] = pathMatrix[i][n] + "," + pathMatrix[n][j];
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < pathMatrix.length; i++) {
+            for (int j = 0; j < pathMatrix[i].length; j++) {
+                System.out.println(pathMatrix[i][j] + "===>" + weightMatrix[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
     private void bfPath(String v, String w, LinkedList<String> path) throws Exception {
         int j = locateVex(v);
         visited[j] = true;

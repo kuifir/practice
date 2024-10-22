@@ -96,4 +96,9 @@ public interface Graph<T> {
      * @throws Exception 异常
      */
     void shortestPath_DIJ(T v) throws Exception;
+    /**
+     * 每一对顶点之间的最短路径
+     * @throws Exception 异常
+     */
+    void shortestPath_Floyd() throws Exception;
 }
