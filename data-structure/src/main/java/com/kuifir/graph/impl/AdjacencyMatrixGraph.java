@@ -8,6 +8,7 @@ import java.util.*;
  * 图的邻接矩阵存储结构
  * 顶点 不重复 类型为String
  * 权值类型为 Integer
+ * 不连通 权值为0
  */
 public class AdjacencyMatrixGraph implements Graph<String> {
     private final boolean unDirectedGraphFlag;
@@ -33,7 +34,8 @@ public class AdjacencyMatrixGraph implements Graph<String> {
             Arrays.fill(arc, 0);
         }
     }
-    public AdjacencyMatrixGraph(boolean unDirectedGraphFlag, String[] vexs, Integer[][] arcs,int arcNum) {
+
+    public AdjacencyMatrixGraph(boolean unDirectedGraphFlag, String[] vexs, Integer[][] arcs, int arcNum) {
         this.unDirectedGraphFlag = unDirectedGraphFlag;
         this.vexs = vexs;
         this.vexNum = vexs.length;
@@ -252,6 +254,70 @@ public class AdjacencyMatrixGraph implements Graph<String> {
     @Override
     public void printJointPoint() throws Exception {
 
+    }
+
+    @Override
+    public void shortestPath_DIJ(String v) throws Exception {
+        int i = locateVex(v);
+        if (i > -1) {
+            // 路径数组
+            String[] paths = new String[vexNum];
+            // 访问数组
+            boolean[] visited = new boolean[vexNum];
+            // 记录节点最短长度
+            Integer[] lengths = new Integer[vexNum];
+            visited[i] = true;
+            paths[i] = vexs[i];
+            lengths[i] = 0;
+            // 初始化
+            for (int j = 0; j < vexNum; j++) {
+                if (arcs[i][j] > 0) {
+                    lengths[j] = arcs[i][j];
+                    paths[j] = vexs[i] + "," + vexs[j];
+                }
+            }
+            // 依次寻找次最短路径，和更新相关节点最短节点路径,需要寻找vexNum-1次
+            for (int j = 1; j < vexNum; j++) {
+                // 找到未被访问的最小的路径对应的节点
+                int minWeight = Integer.MAX_VALUE;
+                int minIndex = -1;
+                for (int k = 0; k < vexNum; k++) {
+                    if (k == i) {
+                        continue;
+                    }
+                    if (lengths[k] != null && !visited[k] && lengths[k] < minWeight) {
+                        minWeight = lengths[k];
+                        minIndex = k;
+                    }
+                }
+                if (minIndex == -1) {
+                    // 不连通
+                    continue;
+                }
+                // 确定最短路径
+                visited[minIndex] = true;
+                // 找到该节点的最短路径后，更新和该节点的临接点的最短路径
+                for (int k = 0; k < vexNum; k++) {
+                    if (k == minIndex) {
+                        continue;
+                    }
+                    if (lengths[k] == null) {
+                        if (arcs[minIndex][k] > 0) {
+                            lengths[k] = minWeight + arcs[minIndex][k];
+                            paths[k] = paths[minIndex] + "," + vexs[k];
+                        }
+                    } else if (lengths[k] > (minWeight + arcs[minIndex][k])) {
+                        if (arcs[minIndex][k] > 0) {
+                            lengths[k] = minWeight + arcs[minIndex][k];
+                            paths[k] = paths[minIndex] + "," + vexs[k];
+                        }
+                    }
+                }
+            }
+            for (int i1 = 0; i1 < paths.length; i1++) {
+                System.out.println(paths[i1] + "-->" + lengths[i1]);
+            }
+        }
     }
 
     private void bfPath(String v, String w, LinkedList<String> path) throws Exception {

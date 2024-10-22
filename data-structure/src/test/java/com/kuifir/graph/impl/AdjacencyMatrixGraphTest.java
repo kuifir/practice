@@ -1,6 +1,29 @@
 package com.kuifir.graph.impl;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 class AdjacencyMatrixGraphTest {
+    AdjacencyMatrixGraph adjacencyMatrixGraph;
+
+    @BeforeEach
+    void beforeEach() {
+        String[] vexs = {"V0", "V1", "V2", "V3", "V4", "V5"};
+        Integer[][] arcs = {
+                {0, 0, 10, 0, 30, 100},
+                {0, 0, 5, 0, 0, 0},
+                {0, 0, 0, 50, 0, 0},
+                {0, 0, 0, 0, 0, 10},
+                {0, 0, 0, 20, 0, 60},
+                {0, 0, 0, 0, 0, 0}
+        };
+        adjacencyMatrixGraph = new AdjacencyMatrixGraph(true, vexs, arcs, 8);
+    }
+
+    @Test
+    void shortestPath_DIJ() throws Exception {
+        adjacencyMatrixGraph.shortestPath_DIJ("V0");
+    }
 
 
     public static void main(String[] args) throws Exception {

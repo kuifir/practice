@@ -248,6 +248,11 @@ public class OrthogonalListGraph<T, A extends Comparable<A>> implements Graph<T>
 
     }
 
+    @Override
+    public void shortestPath_DIJ(T v) throws Exception {
+
+    }
+
     private void bfPath(T v, T w, LinkedList<T> path) throws Exception {
         int j = locateVex(v);
         path.add(v);

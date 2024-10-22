@@ -68,16 +68,16 @@ public interface Graph<T> {
 
     /**
      * 打印 v -w 的简单路径（无回路）
-     * @param v
-     * @param w
+     * @param v 开始节点
+     * @param w 结束节点
      * @throws Exception
      */
     void dfsPath(T v, T w) throws Exception;
 
     /**
      * v-m最短节点路径
-     * @param v
-     * @param w
+     * @param v 开始节点
+     * @param w 结束节点
      * @throws Exception
      */
     void bfsPath(T v, T w) throws Exception;
@@ -86,7 +86,14 @@ public interface Graph<T> {
      * 打印连通图的关节点
      * 关节点的判断
      * 根节点：深度优先遍历是否只有一棵子树
-     * 其他节点：子树节点是否有到祖先的回边     */
+     * 其他节点：子树节点是否有到祖先的回边
+     */
     void printJointPoint() throws Exception;
 
+    /**
+     * 从某个源点到其余各顶点的最短路径
+     * @param v 源顶点
+     * @throws Exception 异常
+     */
+    void shortestPath_DIJ(T v) throws Exception;
 }
