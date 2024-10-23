@@ -108,6 +108,16 @@ public interface Graph<T> {
      */
     void topologicalSort() throws Exception;
 
+    /**
+     * 关键路径 弧为活动，顶点为事件
+     * 1. 对顶点进行拓扑排序，求出每个时间的最早发生时间
+     * 2.按逆拓扑序列求出每个事件的最迟发生时间
+     * 3.求出每个活动的最早开始时间
+     * 4.求出每个活动的最晚开始时间
+     * 5，找出活动最早开始时间和最晚开始时间相同的活动，即为关键活动。
+     * 关键路径可能不止一条。
+     * @throws Exception
+     */
     void criticalPath() throws Exception;
 
 }

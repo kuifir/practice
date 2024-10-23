@@ -14,12 +14,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> {
 
-    private final boolean unDirectedGraphFlag;
-    private final int maxVexNum;
+    protected final boolean unDirectedGraphFlag;
+    protected final int maxVexNum;
 
-    VertexNode<T, A>[] vertices;
-    private int vexNum;
-    private int arcNum;
+    protected VertexNode<T, A>[] vertices;
+    protected int vexNum;
+    protected int arcNum;
 
     private boolean[] visited;
 
