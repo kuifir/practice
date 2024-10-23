@@ -1,6 +1,7 @@
 package com.kuifir.graph.impl;
 
 import com.kuifir.graph.Graph;
+import org.junit.platform.commons.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -234,7 +235,7 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
 
     @Override
     public void printJointPoint() {
-        if(!unDirectedGraphFlag){
+        if (!unDirectedGraphFlag) {
             throw new UnsupportedOperationException("有向图暂不支持打印关节点");
         }
         // 遍历节点
@@ -257,7 +258,7 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
             System.out.print(vertices[0].data + " ");
             while (arcNode.nextArc != null) {
                 arcNode = arcNode.nextArc;
-                if(Objects.isNull(visited[arcNode.adjacencyVex])){
+                if (Objects.isNull(visited[arcNode.adjacencyVex])) {
                     printJointPoint(arcNode.adjacencyVex, count, visited, lows);
                 }
             }
@@ -272,6 +273,54 @@ public class AdjacencyListGraph<T, A extends Comparable<A>> implements Graph<T> 
     @Override
     public void shortestPath_Floyd() throws Exception {
 
+    }
+
+    @Override
+    public void topologicalSort() throws Exception {
+        if (unDirectedGraphFlag) {
+            throw new UnsupportedOperationException();
+        }
+        String path = "";
+        Stack<Integer> beginVexs = new Stack<>();
+        // 节点入度
+        int[] inDegrees = new int[vexNum];
+        // 初始化入度
+        for (int i = 0; i < vexNum; i++) {
+            ArcNode<A> arcNode = vertices[i].firstArc;
+            for (; arcNode != null; arcNode = arcNode.nextArc) {
+                inDegrees[arcNode.adjacencyVex]++;
+            }
+        }
+        int count = 0;
+        // 依次找到入度为0的顶点入栈，该顶点出度的顶点，入度减一
+        for (int i = 0; i < inDegrees.length; i++) {
+            if (inDegrees[i] == 0) {
+                beginVexs.push(i);
+            }
+        }
+        while (!beginVexs.empty()) {
+            Integer pop = beginVexs.pop();
+            path = StringUtils.isBlank(path) ? vertices[pop].data.toString() : path + "," + vertices[pop].data;
+            count++;
+            ArcNode<A> arcNode = vertices[pop].firstArc;
+            for (; arcNode != null; arcNode = arcNode.nextArc) {
+                inDegrees[arcNode.adjacencyVex]--;
+                if (inDegrees[arcNode.adjacencyVex] == 0) {
+                    beginVexs.push(arcNode.adjacencyVex);
+                }
+            }
+        }
+        if (count < vexNum) {
+            throw new UnsupportedOperationException("有向图中回路");
+        }
+        System.out.println("拓扑排序：" + path);
+    }
+
+    @Override
+    public void criticalPath() throws Exception {
+        if (unDirectedGraphFlag) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private void printJointPoint(Integer v, AtomicInteger count, Integer[] visited, Integer[] lows) {

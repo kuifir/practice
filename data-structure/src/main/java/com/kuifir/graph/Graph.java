@@ -101,4 +101,13 @@ public interface Graph<T> {
      * @throws Exception 异常
      */
     void shortestPath_Floyd() throws Exception;
+
+    /**
+     * 拓扑排序
+     * @throws Exception
+     */
+    void topologicalSort() throws Exception;
+
+    void criticalPath() throws Exception;
+
 }

@@ -104,7 +104,7 @@ class AdjacencyListGraphTest {
         adjacencyListDG.printJointPoint();
         System.out.println();
         adjacencyListUDG = new AdjacencyListGraph<>(true, 10);
-        Stream.of("a", "b", "c", "d", "e","f","g","h").forEach(adjacencyListUDG::insertVex);
+        Stream.of("a", "b", "c", "d", "e", "f", "g", "h").forEach(adjacencyListUDG::insertVex);
         List<String[]> data = Arrays.asList(
                 new String[]{"a", "b", "1"},
                 new String[]{"a", "f", "1"},
@@ -122,5 +122,36 @@ class AdjacencyListGraphTest {
         }
         adjacencyListUDG.printJointPoint();
         System.out.println();
+    }
+
+    @Test
+    void topologicalSort() throws Exception {
+
+        adjacencyListDG = new AdjacencyListGraph<>(false, 100);
+
+        Stream.of("C1", "C2", "C3", "C4", "C5", "C6",
+                "C7", "C8", "C9", "C10", "C11", "C12").forEach(adjacencyListDG::insertVex);
+        List<String[]> data = Arrays.asList(
+                new String[]{"C1", "C12", "1"},
+                new String[]{"C1", "C4", "1"},
+                new String[]{"C1", "C3", "1"},
+                new String[]{"C1", "C2", "1"},
+                new String[]{"C2", "C3", "1"},
+                new String[]{"C3", "C5", "1"},
+                new String[]{"C3", "C7", "1"},
+                new String[]{"C3", "C8", "1"},
+                new String[]{"C4", "C5", "1"},
+                new String[]{"C5", "C7", "1"},
+                new String[]{"C6", "C8", "1"},
+                new String[]{"C9", "C10", "1"},
+                new String[]{"C9", "C11", "1"},
+                new String[]{"C9", "C12", "1"},
+                new String[]{"C10", "C12", "1"},
+                new String[]{"C11", "C6", "1"}
+        );
+        for (String[] strings : data) {
+            adjacencyListDG.insertArc(strings[0], strings[1], Integer.valueOf(strings[2]));
+        }
+        adjacencyListDG.topologicalSort();
     }
 }

@@ -373,6 +373,19 @@ public class AdjacencyMatrixGraph implements Graph<String> {
         }
     }
 
+    @Override
+    public void topologicalSort() throws Exception {
+        if(unDirectedGraphFlag){
+            throw new UnsupportedOperationException();
+        }    }
+
+    @Override
+    public void criticalPath() throws Exception {
+        if(unDirectedGraphFlag){
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private void bfPath(String v, String w, LinkedList<String> path) throws Exception {
         int j = locateVex(v);
         visited[j] = true;

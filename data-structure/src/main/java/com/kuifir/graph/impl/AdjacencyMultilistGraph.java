@@ -355,6 +355,16 @@ public class AdjacencyMultilistGraph<T, A extends Comparable<A>> implements Grap
 
     }
 
+    @Override
+    public void topologicalSort() throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void criticalPath() throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
     private void bfPath(T v, T w, LinkedList<T> path) throws Exception {
         int j = locateVex(v);
         path.add(v);
