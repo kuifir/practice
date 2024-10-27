@@ -47,14 +47,10 @@ public class Knapsack_0_1 {
      * 从剩下的装法中选择总重量最接近 Wkg 的。
      */
     public void getMaxValue() {
-        // 背包当前重量
-        AtomicInteger weight = new AtomicInteger(0);
         // 背包物品
         int[] items = new int[n];
-        // 背包价值
-        AtomicInteger value = new AtomicInteger(0);
         AtomicInteger maxValue = new AtomicInteger(0);
-        fillBack(0, weight, items, value, maxValue);
+        fillBack(0, 0, items, 0, maxValue);
         System.out.println("最大价值：" + maxValue.get());
     }
 
@@ -62,14 +58,15 @@ public class Knapsack_0_1 {
      * 对第i个物品做处理
      *
      * @param i      第i个物品
-     * @param weight
+     * @param weight 背包当前重量
+     * @param value  背包当前价值
      */
-    void fillBack(int i, AtomicInteger weight, int[] items, AtomicInteger value, AtomicInteger maxValue) {
-        if (this.n == i || weight.get() == maxWeight) {
-            if (value.get() > maxValue.get()) {
-                maxValue.set(value.get());
+    void fillBack(int i, int weight, int[] items, int value, AtomicInteger maxValue) {
+        if (this.n == i || weight == maxWeight) {
+            if (value > maxValue.get()) {
+                maxValue.set(value);
             }
-            System.out.println("物品：" + Arrays.toString(items) + ",重量：" + weight.get() + ",价值：" + value.get());
+            System.out.println("物品：" + Arrays.toString(items) + ",重量：" + weight + ",价值：" + value);
             return;
         }
         // 如果不装第i个物品
@@ -85,17 +82,12 @@ public class Knapsack_0_1 {
                 items[j] = 0;
             }
         }
-        weight = new AtomicInteger(w);
-        value = new AtomicInteger(v);
-        fillBack(i + 1, weight, items, value, maxValue);
+        fillBack(i + 1, w, items, v, maxValue);
         // 如果装第i个物品
         items[i] = 1;
-        weight = new AtomicInteger(w);
-        value = new AtomicInteger(v);
-        int weightAndAdd = weight.addAndGet(weights[i]);
-        value.addAndGet(values[i]);
+        int weightAndAdd = w + weights[i];
         if (weightAndAdd <= maxWeight) {
-            fillBack(i + 1, weight, items, value, maxValue);
+            fillBack(i + 1, weightAndAdd, items, v + values[i], maxValue);
         }
     }
 }
