@@ -375,13 +375,14 @@ public class AdjacencyMatrixGraph implements Graph<String> {
 
     @Override
     public void topologicalSort() throws Exception {
-        if(unDirectedGraphFlag){
+        if (unDirectedGraphFlag) {
             throw new UnsupportedOperationException();
-        }    }
+        }
+    }
 
     @Override
     public void criticalPath() throws Exception {
-        if(unDirectedGraphFlag){
+        if (unDirectedGraphFlag) {
             throw new UnsupportedOperationException();
         }
     }
